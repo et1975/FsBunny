@@ -1,4 +1,4 @@
-FsBunny [![Windows Build](https://ci.appveyor.com/api/projects/status/8v3ox0ha8im7dgnt?svg=true)](https://ci.appveyor.com/project/et1975/FsBunny) [![Mono/OSX build](https://travis-ci.org/Prolucid/FsBunny.svg?branch=master)](https://travis-ci.org/Prolucid/FsBunny) [![NuGet version](https://badge.fury.io/nu/FsBunny.svg)](https://badge.fury.io/nu/FsBunny)
+FsBunny [![Windows Build](https://ci.appveyor.com/api/projects/status/ssw7ttk4fo27jrs3?svg=true)](https://ci.appveyor.com/project/et1975/FsBunny) [![Mono/OSX build](https://travis-ci.org/Prolucid/FsBunny.svg?branch=master)](https://travis-ci.org/Prolucid/FsBunny) [![NuGet version](https://badge.fury.io/nu/FsBunny.svg)](https://badge.fury.io/nu/FsBunny)
 =======
 
 FsBunny implements a streaming API over RabbitMQ optimizied for implementation of event-driven systems.
