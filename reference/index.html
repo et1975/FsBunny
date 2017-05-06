@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Namespaces - FsBunny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Prolucid"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="https://prolucid.github.io/FsBunny/content/style.css" />
+    <script type="text/javascript" src="https://prolucid.github.io/FsBunny/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="https://prolucid.github.io">prolucid</a></li>
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="https://github.com/Prolucid/FsBunny">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="https://prolucid.github.io/FsBunny/index.html">FsBunny</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+<h1>FsBunny</h1>
+
+
+  <h2>FsBunny Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="fsbunny-assembler-1.html">Assembler<'T></a>
+          </td>
+          <td class="xmldoc"><p>Assembles a message from RMQ primitives (topic, headers, payload)</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fsbunny-consumer-1.html">Consumer<'T></a>
+          </td>
+          <td class="xmldoc"><p>Consumer interface.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fsbunny-disassembler-1.html">Disassembler<'T></a>
+          </td>
+          <td class="xmldoc"><p>Disassembles a message into RMQ primitives</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fsbunny-eventstreams.html">EventStreams</a>
+          </td>
+          <td class="xmldoc"><p>EventStreams is a factory for constructing consumers and publishers.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fsbunny-exchange.html">Exchange</a>
+          </td>
+          <td class="xmldoc"><p>Exchange discriminated union identifier.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fsbunny-publisher-1.html">Publisher<'T></a>
+          </td>
+          <td class="xmldoc"><p>EventPublisher abstraction for publishing events to an exchange.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fsbunny-queue.html">Queue</a>
+          </td>
+          <td class="xmldoc"><p>Queue discriminated union identifier.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fsbunny-rabbitmqeventstreams.html">RabbitMqEventStreams</a>
+          </td>
+          <td class="xmldoc"><p>RabbitMqEventStreams is a factory to construct event-stream publishers and consumers.
+factory: RabbitMQ connection factory to use.
+defaultExchange: default exchange to bind to.
+retries: number of reconnect attempts.
+limit: prefetch limit.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fsbunny-reliableresult-1.html">ReliableResult<'T></a>
+          </td>
+          <td class="xmldoc"><p>ReliableResult contains message and the session-bound unique id used for acknowlegements.</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="fsbunny-consumermodule.html">Consumer</a>
+          </td>
+          <td class="xmldoc"><p>Consumer extensions.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="fsbunny-operators.html">Operators</a>
+          </td>
+          <td class="xmldoc"><p>Infix operators.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="fsbunny-rmq.html">Rmq</a>
+          </td>
+          <td class="xmldoc"><p>Implementation</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>FsBunny.Assemblers Namespace</h2>
+    <div>
+      <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="fsbunny-assemblers-jsonassembly.html">JsonAssembly</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="fsbunny-assemblers-mqttassembly.html">MqttAssembly</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="fsbunny-assemblers-picklerassembly.html">PicklerAssembly</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="fsbunny-assemblers-protoassembly.html">ProtoAssembly</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+
+        </div>
+        <div class="span3">
+          <img src="https://prolucid.github.io/FsBunny/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">FsBunny</li>
+            <li><a href="https://prolucid.github.io/FsBunny/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/FsBunny">Get Library via NuGet</a></li>
+            <li><a href="https://github.com/Prolucid/FsBunny">Source Code on GitHub</a></li>
+            <li><a href="https://prolucid.github.io/FsBunny/license.html">License</a></li>
+            <li><a href="https://prolucid.github.io/FsBunny/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="https://prolucid.github.io/FsBunny/tutorial.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="https://prolucid.github.io/FsBunny/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/Prolucid/FsBunny"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>ProtoAssembly - FsBunny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Prolucid"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="https://prolucid.github.io/FsBunny/content/style.css" />
+    <script type="text/javascript" src="https://prolucid.github.io/FsBunny/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="https://prolucid.github.io">prolucid</a></li>
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="https://github.com/Prolucid/FsBunny">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="https://prolucid.github.io/FsBunny/index.html">FsBunny</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>ProtoAssembly</h1>
+<p>
+  <span>Namespace: FsBunny.Assemblers</span><br />
+</p>
+<div class="xmldoc">
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
+            assembler parser (arg2, arg3, bytes)
+          </code>
+          <div class="tip" id="18">
+            <strong>Signature:</strong> parser:MessageParser&lt;&#39;T&gt; -&gt; (string * IDictionary&lt;string,obj&gt; * bytes:byte []) -&gt; &#39;T<br />
+                          <strong>Type parameters:</strong> 'T          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/Prolucid/FsBunny/tree/master/src/FsBunny/Assemblers/ProtoAssembly.fs#L11-11" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+            disassembler exchange item
+          </code>
+          <div class="tip" id="19">
+            <strong>Signature:</strong> exchange:&#39;?7633 -&gt; item:&#39;?7634 -&gt; &#39;?7633 * &#39;?7636 option * byte []<br />
+                          <strong>Type parameters:</strong> '?7633, '?7634, 'T, '?7636          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/Prolucid/FsBunny/tree/master/src/FsBunny/Assemblers/ProtoAssembly.fs#L8-8" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Type extensions</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Type extension</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+            GetProtoConsumer(queue exchange)
+          </code>
+          <div class="tip" id="20">
+            <strong>Signature:</strong> queue:Queue -&gt; exchange:Exchange -&gt; Consumer&lt;&#39;T&gt;<br />
+                          <strong>Type parameters:</strong> 'T          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/Prolucid/FsBunny/tree/master/src/FsBunny/Assemblers/ProtoAssembly.fs#L16-16" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>EventStreams.GetProtoConsumer</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+            GetProtoPublisher(exchange)
+          </code>
+          <div class="tip" id="21">
+            <strong>Signature:</strong> exchange:Exchange -&gt; Publisher&lt;&#39;T&gt;<br />
+                          <strong>Type parameters:</strong> 'T          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/Prolucid/FsBunny/tree/master/src/FsBunny/Assemblers/ProtoAssembly.fs#L21-21" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Construct a publisher for the specified message type using Proto disassembler.</p>
+
+
+              <p>CompiledName: <code>EventStreams.GetProtoPublisher</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+            UsingProtoPublisher(exchange cont)
+          </code>
+          <div class="tip" id="22">
+            <strong>Signature:</strong> exchange:Exchange -&gt; (cont:(Publisher&lt;&#39;T&gt; -&gt; unit)) -&gt; unit<br />
+                          <strong>Type parameters:</strong> 'T          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/Prolucid/FsBunny/tree/master/src/FsBunny/Assemblers/ProtoAssembly.fs#L25-25" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Use a publisher with a continuation for the specified message type using Proto disassembler.</p>
+
+
+              <p>CompiledName: <code>EventStreams.UsingProtoPublisher</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="https://prolucid.github.io/FsBunny/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">FsBunny</li>
+            <li><a href="https://prolucid.github.io/FsBunny/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/FsBunny">Get Library via NuGet</a></li>
+            <li><a href="https://github.com/Prolucid/FsBunny">Source Code on GitHub</a></li>
+            <li><a href="https://prolucid.github.io/FsBunny/license.html">License</a></li>
+            <li><a href="https://prolucid.github.io/FsBunny/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="https://prolucid.github.io/FsBunny/tutorial.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="https://prolucid.github.io/FsBunny/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/Prolucid/FsBunny"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>
