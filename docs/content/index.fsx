@@ -37,7 +37,7 @@ Installing
 Example
 -------
 
-This example demonstrates the functional language defined by FsBunny:
+This example demonstrates the API defined by FsBunny:
 
 *)
 #r "FsBunny.dll"
