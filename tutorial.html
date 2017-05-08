@@ -75,34 +75,7 @@ The consumer will ensure a connection on every <code>Get</code> request.</p>
 <p>Assemblers grew out of serializers by necessity to inspect/provide metadata in addition to message body.
 Messages can be anything, and it's up to assembler to figure out how to map it to/from RMQ primitives.
 For example, MQTT status message has no payload and the topic itself carries the ONLINE/OFFLINE indication.</p>
-<p>You may want to provide your own and the implementation is as simple as these two functions:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-<span class="l">5: </span>
-<span class="l">6: </span>
-<span class="l">7: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// disassemble a message into RMQ primitives: target exchange, properties and payload</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 11)" onmouseover="showTip(event, 'fs11', 11)" class="f">disassembler</span> <span onmouseout="hideTip(event, 'fs12', 12)" onmouseover="showTip(event, 'fs12', 12)" class="i">exchange</span> (<span onmouseout="hideTip(event, 'fs13', 13)" onmouseover="showTip(event, 'fs13', 13)" class="i">item</span><span class="o">:</span><span class="o">&#39;</span><span class="i">T</span>) <span class="o">:</span> (<span onmouseout="hideTip(event, 'fs14', 14)" onmouseover="showTip(event, 'fs14', 14)" class="t">Exchange</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs15', 15)" onmouseover="showTip(event, 'fs15', 15)" class="t">IDictionary</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs16', 16)" onmouseover="showTip(event, 'fs16', 16)" class="t">string</span>, <span onmouseout="hideTip(event, 'fs17', 17)" onmouseover="showTip(event, 'fs17', 17)" class="t">obj</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs18', 18)" onmouseover="showTip(event, 'fs18', 18)" class="t">option</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs19', 19)" onmouseover="showTip(event, 'fs19', 19)" class="t">byte</span> []) <span class="o">=</span> 
-    <span onmouseout="hideTip(event, 'fs20', 20)" onmouseover="showTip(event, 'fs20', 20)" class="f">failwith</span> <span class="s">&quot;Implement me!&quot;</span>
-
-<span class="c">// assemble a message from RMQ primitives</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 21)" onmouseover="showTip(event, 'fs21', 21)" class="f">assembler</span> (<span onmouseout="hideTip(event, 'fs22', 22)" onmouseover="showTip(event, 'fs22', 22)" class="i">topic</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs16', 23)" onmouseover="showTip(event, 'fs16', 23)" class="t">string</span>, <span onmouseout="hideTip(event, 'fs23', 24)" onmouseover="showTip(event, 'fs23', 24)" class="i">properties</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs15', 25)" onmouseover="showTip(event, 'fs15', 25)" class="t">IDictionary</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs16', 26)" onmouseover="showTip(event, 'fs16', 26)" class="t">string</span>, <span onmouseout="hideTip(event, 'fs17', 27)" onmouseover="showTip(event, 'fs17', 27)" class="t">obj</span><span class="o">&gt;</span>, <span onmouseout="hideTip(event, 'fs24', 28)" onmouseover="showTip(event, 'fs24', 28)" class="i">payload</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs19', 29)" onmouseover="showTip(event, 'fs19', 29)" class="t">byte</span>[]) <span class="o">:</span> <span class="o">&#39;</span><span class="i">T</span> <span class="o">=</span> 
-    <span onmouseout="hideTip(event, 'fs20', 30)" onmouseover="showTip(event, 'fs20', 30)" class="f">failwith</span> <span class="s">&quot;Implement me!&quot;</span>
-</code></pre></td>
-</tr>
-</table>
-<p>In case of a failure to assemble a message from RMQ primitives, the message will be Nacked and go into a Dead Letter queue, if one is setup (recommended).</p>
-<p>FsBunny comes with several default assemblers:</p>
-<ul>
-<li>Google Protobuf (v3)</li>
-<li>FsPickler</li>
-<li>JSON with Fable converter</li>
-<li>MQTT status</li>
-</ul>
-<p>And they are all availabe as extension methods on the EventStreams API, for example:</p>
+<p>You may want to provide your own and the implementation is as simple as two functions, here's an example of a Fable-compatible JSON assembler:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -113,25 +86,114 @@ For example, MQTT status message has no payload and the topic itself carries the
 <span class="l"> 8: </span>
 <span class="l"> 9: </span>
 <span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+<span class="l">27: </span>
+<span class="l">28: </span>
+<span class="l">29: </span>
+<span class="l">30: </span>
+<span class="l">31: </span>
+<span class="l">32: </span>
+<span class="l">33: </span>
+<span class="l">34: </span>
+<span class="l">35: </span>
+<span class="l">36: </span>
+<span class="l">37: </span>
+<span class="l">38: </span>
+<span class="l">39: </span>
+<span class="l">40: </span>
+<span class="l">41: </span>
+<span class="l">42: </span>
+<span class="l">43: </span>
+<span class="l">44: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Newtonsoft.Json.dll&quot;</span>
+<span class="prep">#r</span> <span class="s">&quot;Fable.JsonConverter.dll&quot;</span>
 
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs25', 31)" onmouseover="showTip(event, 'fs25', 31)" class="t">SomeRecord</span> <span class="o">=</span> { <span onmouseout="hideTip(event, 'fs26', 32)" onmouseover="showTip(event, 'fs26', 32)" class="i">x</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs27', 33)" onmouseover="showTip(event, 'fs27', 33)" class="t">int</span> }
+<span class="k">module</span> <span class="t">JsonAssembly</span> <span class="o">=</span>
+    <span class="k">open</span> <span onmouseout="hideTip(event, 'fs4', 11)" onmouseover="showTip(event, 'fs4', 11)" class="i">FsBunny</span>
+    <span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 12)" onmouseover="showTip(event, 'fs1', 12)" class="i">System</span>
+    <span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 13)" onmouseover="showTip(event, 'fs1', 13)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 14)" onmouseover="showTip(event, 'fs11', 14)" class="i">IO</span>
+    <span class="k">open</span> <span class="i">Newtonsoft</span><span class="o">.</span><span class="i">Json</span>
 
-<span class="k">open</span> <span onmouseout="hideTip(event, 'fs4', 34)" onmouseover="showTip(event, 'fs4', 34)" class="i">FsBunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs28', 35)" onmouseover="showTip(event, 'fs28', 35)" class="i">Assemblers</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 15)" onmouseover="showTip(event, 'fs12', 15)" class="i">serializer</span> <span class="o">=</span> 
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 16)" onmouseover="showTip(event, 'fs13', 16)" class="i">s</span> <span class="o">=</span> <span class="i">JsonSerializer</span><span class="o">.</span><span class="i">CreateDefault</span>()
+        <span onmouseout="hideTip(event, 'fs13', 17)" onmouseover="showTip(event, 'fs13', 17)" class="i">s</span><span class="o">.</span><span class="i">Converters</span><span class="o">.</span><span class="i">Add</span>(<span class="i">Fable</span><span class="o">.</span><span class="i">JsonConverter</span>())
+        <span onmouseout="hideTip(event, 'fs13', 18)" onmouseover="showTip(event, 'fs13', 18)" class="i">s</span><span class="o">.</span><span class="i">Converters</span><span class="o">.</span><span class="i">Add</span>(<span class="i">Converters</span><span class="o">.</span><span class="i">IsoDateTimeConverter</span> (<span class="i">DateTimeFormat</span> <span class="o">=</span> <span class="s">&quot;yyyy&#39;-&#39;MM&#39;-&#39;dd&#39;T&#39;HH&#39;:&#39;mm&#39;:&#39;ss.fff&#39;Z&#39;&quot;</span>))
+        <span onmouseout="hideTip(event, 'fs13', 19)" onmouseover="showTip(event, 'fs13', 19)" class="i">s</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 36)" onmouseover="showTip(event, 'fs29', 36)" class="f">sendSomeRecord</span>() <span class="o">=</span>
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs30', 37)" onmouseover="showTip(event, 'fs30', 37)" class="f">send</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 38)" onmouseover="showTip(event, 'fs5', 38)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 39)" onmouseover="showTip(event, 'fs31', 39)" class="f">GetJsonPublisher</span> (<span onmouseout="hideTip(event, 'fs5', 40)" onmouseover="showTip(event, 'fs5', 40)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 41)" onmouseover="showTip(event, 'fs32', 41)" class="f">Default</span>()) <span class="c">// sending to the default exchange</span>
-    <span onmouseout="hideTip(event, 'fs30', 42)" onmouseover="showTip(event, 'fs30', 42)" class="f">send</span> { <span onmouseout="hideTip(event, 'fs26', 43)" onmouseover="showTip(event, 'fs26', 43)" class="i">x</span> <span class="o">=</span> <span class="n">1</span> } 
+    <span class="c">// disassemble a message into RMQ primitives: target exchange, properties and payload</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 20)" onmouseover="showTip(event, 'fs14', 20)" class="f">disassembler</span> <span onmouseout="hideTip(event, 'fs15', 21)" onmouseover="showTip(event, 'fs15', 21)" class="i">exchange</span> (<span onmouseout="hideTip(event, 'fs16', 22)" onmouseover="showTip(event, 'fs16', 22)" class="i">item</span><span class="o">:</span><span class="o">&#39;</span><span class="i">T</span>) <span class="o">:</span> (<span onmouseout="hideTip(event, 'fs17', 23)" onmouseover="showTip(event, 'fs17', 23)" class="t">Exchange</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs18', 24)" onmouseover="showTip(event, 'fs18', 24)" class="t">IDictionary</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs19', 25)" onmouseover="showTip(event, 'fs19', 25)" class="t">string</span>, <span onmouseout="hideTip(event, 'fs20', 26)" onmouseover="showTip(event, 'fs20', 26)" class="t">obj</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs21', 27)" onmouseover="showTip(event, 'fs21', 27)" class="t">option</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs22', 28)" onmouseover="showTip(event, 'fs22', 28)" class="t">byte</span> []) <span class="o">=</span> 
+        <span class="k">use</span> <span onmouseout="hideTip(event, 'fs23', 29)" onmouseover="showTip(event, 'fs23', 29)" class="i">ms</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs24', 30)" onmouseover="showTip(event, 'fs24', 30)" class="t">MemoryStream</span>()
+        <span class="k">use</span> <span onmouseout="hideTip(event, 'fs25', 31)" onmouseover="showTip(event, 'fs25', 31)" class="i">sw</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs26', 32)" onmouseover="showTip(event, 'fs26', 32)" class="t">StreamWriter</span> (<span onmouseout="hideTip(event, 'fs23', 33)" onmouseover="showTip(event, 'fs23', 33)" class="i">ms</span>)
+        <span class="k">use</span> <span onmouseout="hideTip(event, 'fs27', 34)" onmouseover="showTip(event, 'fs27', 34)" class="i">jw</span> <span class="o">=</span> <span class="k">new</span> <span class="i">JsonTextWriter</span> (<span onmouseout="hideTip(event, 'fs25', 35)" onmouseover="showTip(event, 'fs25', 35)" class="i">sw</span>)
+        <span onmouseout="hideTip(event, 'fs12', 36)" onmouseover="showTip(event, 'fs12', 36)" class="i">serializer</span><span class="o">.</span><span class="i">Serialize</span> (<span onmouseout="hideTip(event, 'fs27', 37)" onmouseover="showTip(event, 'fs27', 37)" class="i">jw</span>,<span onmouseout="hideTip(event, 'fs16', 38)" onmouseover="showTip(event, 'fs16', 38)" class="i">item</span>)
+        <span onmouseout="hideTip(event, 'fs27', 39)" onmouseover="showTip(event, 'fs27', 39)" class="i">jw</span><span class="o">.</span><span class="i">Flush</span>()
+        <span onmouseout="hideTip(event, 'fs15', 40)" onmouseover="showTip(event, 'fs15', 40)" class="i">exchange</span>, <span onmouseout="hideTip(event, 'fs28', 41)" onmouseover="showTip(event, 'fs28', 41)" class="p">None</span>, <span onmouseout="hideTip(event, 'fs23', 42)" onmouseover="showTip(event, 'fs23', 42)" class="i">ms</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs29', 43)" onmouseover="showTip(event, 'fs29', 43)" class="f">ToArray</span>()
+
+    <span class="c">// assemble a message from RMQ primitives</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs30', 44)" onmouseover="showTip(event, 'fs30', 44)" class="f">assembler</span> (<span onmouseout="hideTip(event, 'fs31', 45)" onmouseover="showTip(event, 'fs31', 45)" class="i">topic</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs19', 46)" onmouseover="showTip(event, 'fs19', 46)" class="t">string</span>, <span onmouseout="hideTip(event, 'fs32', 47)" onmouseover="showTip(event, 'fs32', 47)" class="i">properties</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs18', 48)" onmouseover="showTip(event, 'fs18', 48)" class="t">IDictionary</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs19', 49)" onmouseover="showTip(event, 'fs19', 49)" class="t">string</span>, <span onmouseout="hideTip(event, 'fs20', 50)" onmouseover="showTip(event, 'fs20', 50)" class="t">obj</span><span class="o">&gt;</span>, <span onmouseout="hideTip(event, 'fs33', 51)" onmouseover="showTip(event, 'fs33', 51)" class="i">payload</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs22', 52)" onmouseover="showTip(event, 'fs22', 52)" class="t">byte</span>[]) <span class="o">:</span> <span class="o">&#39;</span><span class="i">T</span> <span class="o">=</span> 
+        <span class="k">use</span> <span onmouseout="hideTip(event, 'fs23', 53)" onmouseover="showTip(event, 'fs23', 53)" class="i">ms</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs24', 54)" onmouseover="showTip(event, 'fs24', 54)" class="t">MemoryStream</span>(<span onmouseout="hideTip(event, 'fs33', 55)" onmouseover="showTip(event, 'fs33', 55)" class="i">payload</span>)
+        <span class="k">use</span> <span onmouseout="hideTip(event, 'fs34', 56)" onmouseover="showTip(event, 'fs34', 56)" class="i">sr</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs35', 57)" onmouseover="showTip(event, 'fs35', 57)" class="t">StreamReader</span> (<span onmouseout="hideTip(event, 'fs23', 58)" onmouseover="showTip(event, 'fs23', 58)" class="i">ms</span>)
+        <span class="k">use</span> <span onmouseout="hideTip(event, 'fs36', 59)" onmouseover="showTip(event, 'fs36', 59)" class="i">jr</span> <span class="o">=</span> <span class="k">new</span> <span class="i">JsonTextReader</span> (<span onmouseout="hideTip(event, 'fs34', 60)" onmouseover="showTip(event, 'fs34', 60)" class="i">sr</span>)
+        <span onmouseout="hideTip(event, 'fs12', 61)" onmouseover="showTip(event, 'fs12', 61)" class="i">serializer</span><span class="o">.</span><span class="i">Deserialize</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span>(<span onmouseout="hideTip(event, 'fs36', 62)" onmouseover="showTip(event, 'fs36', 62)" class="i">jr</span>)
+
+    <span class="c">// and let&#39;s expose the functionality as extensions on EventStreams</span>
+    <span class="k">type</span> <span onmouseout="hideTip(event, 'fs4', 63)" onmouseover="showTip(event, 'fs4', 63)" class="i">FsBunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 64)" onmouseover="showTip(event, 'fs10', 64)" class="t">EventStreams</span> <span class="k">with</span> 
+       <span class="c">/// Construct a consumer, using specified message type, queue, the exchange to bind to and Proto assember.</span>
+        <span class="k">member</span> <span onmouseout="hideTip(event, 'fs37', 65)" onmouseover="showTip(event, 'fs37', 65)" class="i">this</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs38', 66)" onmouseover="showTip(event, 'fs38', 66)" class="f">GetJsonConsumer</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span> (<span onmouseout="hideTip(event, 'fs39', 67)" onmouseover="showTip(event, 'fs39', 67)" class="i">queue</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs40', 68)" onmouseover="showTip(event, 'fs40', 68)" class="t">Queue</span>) (<span onmouseout="hideTip(event, 'fs15', 69)" onmouseover="showTip(event, 'fs15', 69)" class="i">exchange</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs17', 70)" onmouseover="showTip(event, 'fs17', 70)" class="t">Exchange</span>) <span class="o">:</span> <span onmouseout="hideTip(event, 'fs41', 71)" onmouseover="showTip(event, 'fs41', 71)" class="t">Consumer</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span> <span class="o">=</span>
+            <span onmouseout="hideTip(event, 'fs37', 72)" onmouseover="showTip(event, 'fs37', 72)" class="i">this</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs42', 73)" onmouseover="showTip(event, 'fs42', 73)" class="f">GetConsumer</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs39', 74)" onmouseover="showTip(event, 'fs39', 74)" class="i">queue</span> <span onmouseout="hideTip(event, 'fs15', 75)" onmouseover="showTip(event, 'fs15', 75)" class="i">exchange</span> <span onmouseout="hideTip(event, 'fs30', 76)" onmouseover="showTip(event, 'fs30', 76)" class="f">assembler</span>
+
+        <span class="c">/// Construct a publisher for the specified message type using Json disassembler.</span>
+        <span class="k">member</span> <span onmouseout="hideTip(event, 'fs37', 77)" onmouseover="showTip(event, 'fs37', 77)" class="i">this</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs43', 78)" onmouseover="showTip(event, 'fs43', 78)" class="f">GetJsonPublisher</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span> (<span onmouseout="hideTip(event, 'fs15', 79)" onmouseover="showTip(event, 'fs15', 79)" class="i">exchange</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs17', 80)" onmouseover="showTip(event, 'fs17', 80)" class="t">Exchange</span>) <span class="o">:</span> <span onmouseout="hideTip(event, 'fs44', 81)" onmouseover="showTip(event, 'fs44', 81)" class="t">Publisher</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span> <span class="o">=</span> 
+            <span onmouseout="hideTip(event, 'fs37', 82)" onmouseover="showTip(event, 'fs37', 82)" class="i">this</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs45', 83)" onmouseover="showTip(event, 'fs45', 83)" class="f">GetPublisher</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span> (<span onmouseout="hideTip(event, 'fs14', 84)" onmouseover="showTip(event, 'fs14', 84)" class="f">disassembler</span> <span onmouseout="hideTip(event, 'fs15', 85)" onmouseover="showTip(event, 'fs15', 85)" class="i">exchange</span>)
+
+        <span class="c">/// Use a publisher with a continuation for the specified message type using Json disassembler.</span>
+        <span class="k">member</span> <span onmouseout="hideTip(event, 'fs37', 86)" onmouseover="showTip(event, 'fs37', 86)" class="i">this</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs46', 87)" onmouseover="showTip(event, 'fs46', 87)" class="f">UsingJsonPublisher</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span> (<span onmouseout="hideTip(event, 'fs15', 88)" onmouseover="showTip(event, 'fs15', 88)" class="i">exchange</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs17', 89)" onmouseover="showTip(event, 'fs17', 89)" class="t">Exchange</span>) (<span onmouseout="hideTip(event, 'fs47', 90)" onmouseover="showTip(event, 'fs47', 90)" class="f">cont</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs44', 91)" onmouseover="showTip(event, 'fs44', 91)" class="t">Publisher</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs48', 92)" onmouseover="showTip(event, 'fs48', 92)" class="t">unit</span>) <span class="o">:</span> <span onmouseout="hideTip(event, 'fs48', 93)" onmouseover="showTip(event, 'fs48', 93)" class="t">unit</span> <span class="o">=</span>
+            <span onmouseout="hideTip(event, 'fs37', 94)" onmouseover="showTip(event, 'fs37', 94)" class="i">this</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 95)" onmouseover="showTip(event, 'fs49', 95)" class="f">UsingPublisher</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">T</span><span class="o">&gt;</span> (<span onmouseout="hideTip(event, 'fs14', 96)" onmouseover="showTip(event, 'fs14', 96)" class="f">disassembler</span> <span onmouseout="hideTip(event, 'fs15', 97)" onmouseover="showTip(event, 'fs15', 97)" class="i">exchange</span>) <span onmouseout="hideTip(event, 'fs47', 98)" onmouseover="showTip(event, 'fs47', 98)" class="f">cont</span>
+</code></pre></td>
+</tr>
+</table>
+<p>In case of a failure to assemble a message from RMQ primitives, the message will be Nacked and go into a Dead Letter queue (if one is setup).</p>
+<h1><a name="Publisher" class="anchor" href="#Publisher">Publisher</a></h1>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs50', 99)" onmouseover="showTip(event, 'fs50', 99)" class="t">SomeRecord</span> <span class="o">=</span> { <span onmouseout="hideTip(event, 'fs51', 100)" onmouseover="showTip(event, 'fs51', 100)" class="i">x</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs52', 101)" onmouseover="showTip(event, 'fs52', 101)" class="t">int</span> }
+
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs53', 102)" onmouseover="showTip(event, 'fs53', 102)" class="i">JsonAssembly</span> <span class="c">// import our assembler</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs54', 103)" onmouseover="showTip(event, 'fs54', 103)" class="f">sendSomeRecord</span>() <span class="o">=</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs55', 104)" onmouseover="showTip(event, 'fs55', 104)" class="f">send</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 105)" onmouseover="showTip(event, 'fs5', 105)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs56', 106)" onmouseover="showTip(event, 'fs56', 106)" class="f">GetJsonPublisher</span> (<span onmouseout="hideTip(event, 'fs5', 107)" onmouseover="showTip(event, 'fs5', 107)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs57', 108)" onmouseover="showTip(event, 'fs57', 108)" class="f">Default</span>()) <span class="c">// sending to the default exchange</span>
+    <span onmouseout="hideTip(event, 'fs55', 109)" onmouseover="showTip(event, 'fs55', 109)" class="f">send</span> { <span onmouseout="hideTip(event, 'fs51', 110)" onmouseover="showTip(event, 'fs51', 110)" class="i">x</span> <span class="o">=</span> <span class="n">1</span> } 
     <span class="c">// can keep sending messages</span>
 </code></pre></td>
 </tr>
 </table>
-<h1><a name="Publisher" class="anchor" href="#Publisher">Publisher</a></h1>
 <p>Publisher is just a function that takes a message and returns when completed and
 there are two ways to obtain it:</p>
 <ul>
-<li>For long-living use, as in example above</li>
+<li>For long-living use, as in example above,</li>
 <li>Or for immediate use and disposal:</li>
 </ul>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
@@ -142,41 +204,35 @@ there are two ways to obtain it:</p>
 <span class="l">6: </span>
 <span class="l">7: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs33', 44)" onmouseover="showTip(event, 'fs33', 44)" class="f">sendSomeRecordDisposeResources</span>() <span class="o">=</span>
-    <span onmouseout="hideTip(event, 'fs5', 45)" onmouseover="showTip(event, 'fs5', 45)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 46)" onmouseover="showTip(event, 'fs34', 46)" class="f">UsingJsonPublisher</span>
-        (<span onmouseout="hideTip(event, 'fs5', 47)" onmouseover="showTip(event, 'fs5', 47)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 48)" onmouseover="showTip(event, 'fs32', 48)" class="f">Default</span>())
-        (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs30', 49)" onmouseover="showTip(event, 'fs30', 49)" class="f">send</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs30', 50)" onmouseover="showTip(event, 'fs30', 50)" class="f">send</span> { <span onmouseout="hideTip(event, 'fs26', 51)" onmouseover="showTip(event, 'fs26', 51)" class="i">x</span> <span class="o">=</span> <span class="n">1</span> }) 
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs58', 111)" onmouseover="showTip(event, 'fs58', 111)" class="f">sendSomeRecordDisposeResources</span>() <span class="o">=</span>
+    <span onmouseout="hideTip(event, 'fs5', 112)" onmouseover="showTip(event, 'fs5', 112)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs59', 113)" onmouseover="showTip(event, 'fs59', 113)" class="f">UsingJsonPublisher</span>
+        (<span onmouseout="hideTip(event, 'fs5', 114)" onmouseover="showTip(event, 'fs5', 114)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs57', 115)" onmouseover="showTip(event, 'fs57', 115)" class="f">Default</span>())
+        (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs55', 116)" onmouseover="showTip(event, 'fs55', 116)" class="f">send</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs55', 117)" onmouseover="showTip(event, 'fs55', 117)" class="f">send</span> { <span onmouseout="hideTip(event, 'fs51', 118)" onmouseover="showTip(event, 'fs51', 118)" class="i">x</span> <span class="o">=</span> <span class="n">1</span> }) 
 
     <span class="c">// or, using an equivalent infix operator</span>
-    { <span onmouseout="hideTip(event, 'fs26', 52)" onmouseover="showTip(event, 'fs26', 52)" class="i">x</span> <span class="o">=</span> <span class="n">2</span> } <span class="o">|-&gt;</span> <span onmouseout="hideTip(event, 'fs5', 53)" onmouseover="showTip(event, 'fs5', 53)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 54)" onmouseover="showTip(event, 'fs34', 54)" class="f">UsingJsonPublisher</span> (<span onmouseout="hideTip(event, 'fs5', 55)" onmouseover="showTip(event, 'fs5', 55)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 56)" onmouseover="showTip(event, 'fs32', 56)" class="f">Default</span>())
+    { <span onmouseout="hideTip(event, 'fs51', 119)" onmouseover="showTip(event, 'fs51', 119)" class="i">x</span> <span class="o">=</span> <span class="n">2</span> } <span class="o">|-&gt;</span> <span onmouseout="hideTip(event, 'fs5', 120)" onmouseover="showTip(event, 'fs5', 120)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs59', 121)" onmouseover="showTip(event, 'fs59', 121)" class="f">UsingJsonPublisher</span> (<span onmouseout="hideTip(event, 'fs5', 122)" onmouseover="showTip(event, 'fs5', 122)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs57', 123)" onmouseover="showTip(event, 'fs57', 123)" class="f">Default</span>())
 </code></pre></td>
 </tr>
 </table>
 <h1><a name="Consumer" class="anchor" href="#Consumer">Consumer</a></h1>
-<p>Consumer implicitly creates a queue, subscribes to a topic on the specified exchange and starts listening for messages.
-Consumer can bind to a persistent or temporary queue, the temporary queue will be given a Guid for a name, Ack messages automatically and be deleted once the consumer is garbage-collected.
-Persistent queue consumer is the choice for guaranteed processing and is expected to Ack/Nack messages explicitly.</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
-<span class="l"> 2: </span>
-<span class="l"> 3: </span>
-<span class="l"> 4: </span>
-<span class="l"> 5: </span>
-<span class="l"> 6: </span>
-<span class="l"> 7: </span>
-<span class="l"> 8: </span>
-<span class="l"> 9: </span>
-<span class="l">10: </span>
+<p>Consumer implicitly creates a queue, subscribes to a topic on the specified <code>Exchange</code> and starts listening for messages.
+Consumer can bind to a <code>Persistent</code> or <code>Temporary</code> queue (temporary queues will be given Guid names, Ack messages automatically and be deleted once the consumer is garbage-collected).
+For guaranteed processing you'll use Persistent queue and is expected to Ack/Nack messages explicitly.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Google.Protobuf.dll&quot;</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs60', 124)" onmouseover="showTip(event, 'fs60', 124)" class="i">FSharp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs61', 125)" onmouseover="showTip(event, 'fs61', 125)" class="i">Data</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs62', 126)" onmouseover="showTip(event, 'fs62', 126)" class="i">UnitSystems</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs63', 127)" onmouseover="showTip(event, 'fs63', 127)" class="i">SI</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs64', 128)" onmouseover="showTip(event, 'fs64', 128)" class="i">UnitSymbols</span>
 
-<span class="k">open</span> <span onmouseout="hideTip(event, 'fs35', 57)" onmouseover="showTip(event, 'fs35', 57)" class="i">Google</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 58)" onmouseover="showTip(event, 'fs36', 58)" class="i">Protobuf</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 59)" onmouseover="showTip(event, 'fs37', 59)" class="i">WellKnownTypes</span>
-<span class="k">open</span> <span onmouseout="hideTip(event, 'fs38', 60)" onmouseover="showTip(event, 'fs38', 60)" class="i">FSharp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs39', 61)" onmouseover="showTip(event, 'fs39', 61)" class="i">Data</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs40', 62)" onmouseover="showTip(event, 'fs40', 62)" class="i">UnitSystems</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs41', 63)" onmouseover="showTip(event, 'fs41', 63)" class="i">SI</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs42', 64)" onmouseover="showTip(event, 'fs42', 64)" class="i">UnitSymbols</span>
-
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs43', 65)" onmouseover="showTip(event, 'fs43', 65)" class="f">createConsumers</span> () <span class="o">=</span>
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs44', 66)" onmouseover="showTip(event, 'fs44', 66)" class="i">temp</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 67)" onmouseover="showTip(event, 'fs5', 67)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs45', 68)" onmouseover="showTip(event, 'fs45', 68)" class="f">GetProtoConsumer</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs46', 69)" onmouseover="showTip(event, 'fs46', 69)" class="t">Int32Value</span><span class="o">&gt;</span> 
-                    <span onmouseout="hideTip(event, 'fs47', 70)" onmouseover="showTip(event, 'fs47', 70)" class="p">Temporary</span> (<span onmouseout="hideTip(event, 'fs48', 71)" onmouseover="showTip(event, 'fs48', 71)" class="p">Routed</span>(<span class="s">&quot;amq.topic&quot;</span>, <span class="s">&quot;test.roundtrip&quot;</span>))
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs49', 72)" onmouseover="showTip(event, 'fs49', 72)" class="i">persistent</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 73)" onmouseover="showTip(event, 'fs5', 73)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs45', 74)" onmouseover="showTip(event, 'fs45', 74)" class="f">GetProtoConsumer</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs50', 75)" onmouseover="showTip(event, 'fs50', 75)" class="t">Int64Value</span><span class="o">&gt;</span> 
-                        (<span onmouseout="hideTip(event, 'fs51', 76)" onmouseover="showTip(event, 'fs51', 76)" class="p">Persistent</span> <span class="s">&quot;my_queue&quot;</span>) (<span onmouseout="hideTip(event, 'fs48', 77)" onmouseover="showTip(event, 'fs48', 77)" class="p">Routed</span>(<span class="s">&quot;amq.topic&quot;</span>, <span class="s">&quot;test.roundtrip&quot;</span>))
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs65', 129)" onmouseover="showTip(event, 'fs65', 129)" class="f">createConsumers</span> () <span class="o">=</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs66', 130)" onmouseover="showTip(event, 'fs66', 130)" class="i">temp</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 131)" onmouseover="showTip(event, 'fs5', 131)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs67', 132)" onmouseover="showTip(event, 'fs67', 132)" class="f">GetJsonConsumer</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs52', 133)" onmouseover="showTip(event, 'fs52', 133)" class="t">int</span><span class="o">&gt;</span> 
+                    <span onmouseout="hideTip(event, 'fs68', 134)" onmouseover="showTip(event, 'fs68', 134)" class="p">Temporary</span> (<span onmouseout="hideTip(event, 'fs69', 135)" onmouseover="showTip(event, 'fs69', 135)" class="p">Routed</span>(<span class="s">&quot;amq.topic&quot;</span>, <span class="s">&quot;test.roundtrip&quot;</span>))
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs70', 136)" onmouseover="showTip(event, 'fs70', 136)" class="i">persistent</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 137)" onmouseover="showTip(event, 'fs5', 137)" class="i">streams</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs67', 138)" onmouseover="showTip(event, 'fs67', 138)" class="f">GetJsonConsumer</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs71', 139)" onmouseover="showTip(event, 'fs71', 139)" class="t">int64</span><span class="o">&gt;</span> 
+                        (<span onmouseout="hideTip(event, 'fs72', 140)" onmouseover="showTip(event, 'fs72', 140)" class="p">Persistent</span> <span class="s">&quot;my_queue&quot;</span>) (<span onmouseout="hideTip(event, 'fs69', 141)" onmouseover="showTip(event, 'fs69', 141)" class="p">Routed</span>(<span class="s">&quot;amq.topic&quot;</span>, <span class="s">&quot;test.roundtrip&quot;</span>))
 </code></pre></td>
 </tr>
 </table>
@@ -186,8 +242,8 @@ Persistent queue consumer is the choice for guaranteed processing and is expecte
 <span class="l">2: </span>
 <span class="l">3: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs44', 78)" onmouseover="showTip(event, 'fs44', 78)" class="i">temp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs52', 79)" onmouseover="showTip(event, 'fs52', 79)" class="f">Get</span> <span class="n">10</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs53', 80)" onmouseover="showTip(event, 'fs53', 80)" class="t">s</span><span class="o">&gt;</span> <span class="k">with</span>
-    | <span onmouseout="hideTip(event, 'fs54', 81)" onmouseover="showTip(event, 'fs54', 81)" class="p">Some</span> <span onmouseout="hideTip(event, 'fs55', 82)" onmouseover="showTip(event, 'fs55', 82)" class="i">r</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs56', 83)" onmouseover="showTip(event, 'fs56', 83)" class="f">printf</span> <span class="s">&quot;Got an int32: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs55', 84)" onmouseover="showTip(event, 'fs55', 84)" class="i">r</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs57', 85)" onmouseover="showTip(event, 'fs57', 85)" class="i">msg</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs58', 86)" onmouseover="showTip(event, 'fs58', 86)" class="i">Value</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs66', 142)" onmouseover="showTip(event, 'fs66', 142)" class="i">temp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs73', 143)" onmouseover="showTip(event, 'fs73', 143)" class="f">Get</span> <span class="n">10</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs74', 144)" onmouseover="showTip(event, 'fs74', 144)" class="t">s</span><span class="o">&gt;</span> <span class="k">with</span>
+    | <span onmouseout="hideTip(event, 'fs75', 145)" onmouseover="showTip(event, 'fs75', 145)" class="p">Some</span> <span onmouseout="hideTip(event, 'fs76', 146)" onmouseover="showTip(event, 'fs76', 146)" class="i">r</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs77', 147)" onmouseover="showTip(event, 'fs77', 147)" class="f">printf</span> <span class="s">&quot;Got an int32: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs76', 148)" onmouseover="showTip(event, 'fs76', 148)" class="i">r</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs78', 149)" onmouseover="showTip(event, 'fs78', 149)" class="i">msg</span>
     | _ <span class="k">-&gt;</span> ()
 </code></pre></td>
 </tr>
@@ -198,10 +254,12 @@ Persistent queue consumer is the choice for guaranteed processing and is expecte
 <span class="l">2: </span>
 <span class="l">3: </span>
 <span class="l">4: </span>
+<span class="l">5: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs49', 87)" onmouseover="showTip(event, 'fs49', 87)" class="i">persistent</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs52', 88)" onmouseover="showTip(event, 'fs52', 88)" class="f">Get</span> <span class="n">10</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs53', 89)" onmouseover="showTip(event, 'fs53', 89)" class="t">s</span><span class="o">&gt;</span> <span class="k">with</span>
-    | <span onmouseout="hideTip(event, 'fs54', 90)" onmouseover="showTip(event, 'fs54', 90)" class="p">Some</span> <span onmouseout="hideTip(event, 'fs59', 91)" onmouseover="showTip(event, 'fs59', 91)" class="i">r</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs56', 92)" onmouseover="showTip(event, 'fs56', 92)" class="f">printf</span> <span class="s">&quot;Got an int64: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs59', 93)" onmouseover="showTip(event, 'fs59', 93)" class="i">r</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs60', 94)" onmouseover="showTip(event, 'fs60', 94)" class="i">msg</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs61', 95)" onmouseover="showTip(event, 'fs61', 95)" class="i">Value</span>
-                <span onmouseout="hideTip(event, 'fs49', 96)" onmouseover="showTip(event, 'fs49', 96)" class="i">persistent</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs62', 97)" onmouseover="showTip(event, 'fs62', 97)" class="f">Ack</span> <span onmouseout="hideTip(event, 'fs59', 98)" onmouseover="showTip(event, 'fs59', 98)" class="i">r</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs63', 99)" onmouseover="showTip(event, 'fs63', 99)" class="i">id</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs70', 150)" onmouseover="showTip(event, 'fs70', 150)" class="i">persistent</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs73', 151)" onmouseover="showTip(event, 'fs73', 151)" class="f">Get</span> <span class="n">10</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs74', 152)" onmouseover="showTip(event, 'fs74', 152)" class="t">s</span><span class="o">&gt;</span> <span class="k">with</span>
+    | <span onmouseout="hideTip(event, 'fs75', 153)" onmouseover="showTip(event, 'fs75', 153)" class="p">Some</span> <span onmouseout="hideTip(event, 'fs79', 154)" onmouseover="showTip(event, 'fs79', 154)" class="i">r</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs77', 155)" onmouseover="showTip(event, 'fs77', 155)" class="f">printf</span> <span class="s">&quot;Got an int64: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs79', 156)" onmouseover="showTip(event, 'fs79', 156)" class="i">r</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs80', 157)" onmouseover="showTip(event, 'fs80', 157)" class="i">msg</span>
+                <span onmouseout="hideTip(event, 'fs70', 158)" onmouseover="showTip(event, 'fs70', 158)" class="i">persistent</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs81', 159)" onmouseover="showTip(event, 'fs81', 159)" class="f">Ack</span> <span onmouseout="hideTip(event, 'fs79', 160)" onmouseover="showTip(event, 'fs79', 160)" class="i">r</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs82', 161)" onmouseover="showTip(event, 'fs82', 161)" class="i">id</span>
+                <span class="c">// or persistent.Nack r.id</span>
     | _ <span class="k">-&gt;</span> ()
 </code></pre></td>
 </tr>
@@ -218,59 +276,78 @@ Persistent queue consumer is the choice for guaranteed processing and is expecte
 <div class="tip" id="fs8">namespace RabbitMQ.Client</div>
 <div class="tip" id="fs9">Multiple items<br />type ConnectionFactory =<br />&#160;&#160;new : unit -&gt; ConnectionFactory<br />&#160;&#160;val UserName : string<br />&#160;&#160;val Password : string<br />&#160;&#160;val VirtualHost : string<br />&#160;&#160;val RequestedChannelMax : uint16<br />&#160;&#160;val RequestedFrameMax : uint32<br />&#160;&#160;val RequestedHeartbeat : uint16<br />&#160;&#160;val ClientProperties : IDictionary<br />&#160;&#160;val Ssl : SslOption<br />&#160;&#160;val HostName : string<br />&#160;&#160;...<br /><br />Full name: RabbitMQ.Client.ConnectionFactory<br /><br />--------------------<br />RabbitMQ.Client.ConnectionFactory() : unit</div>
 <div class="tip" id="fs10">type EventStreams =<br />&#160;&#160;interface<br />&#160;&#160;&#160;&#160;abstract member Default : unit -&gt; Exchange<br />&#160;&#160;&#160;&#160;abstract member GetConsumer : Queue -&gt; Exchange -&gt; Assembler&lt;&#39;T&gt; -&gt; Consumer&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;abstract member GetPublisher : Disassembler&lt;&#39;T&gt; -&gt; Publisher&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;abstract member Routed : string -&gt; Exchange<br />&#160;&#160;&#160;&#160;abstract member UsingPublisher : Disassembler&lt;&#39;T&gt; -&gt; (Publisher&lt;&#39;T&gt; -&gt; unit) -&gt; unit<br />&#160;&#160;end<br /><br />Full name: FsBunny.EventStreams</div>
-<div class="tip" id="fs11">val disassembler : exchange:&#39;a -&gt; item:&#39;T -&gt; Exchange * IDictionary&lt;string,obj&gt; option * byte []<br /><br />Full name: Tutorial.disassembler</div>
-<div class="tip" id="fs12">val exchange : &#39;a</div>
-<div class="tip" id="fs13">val item : &#39;T</div>
-<div class="tip" id="fs14">type Exchange =<br />&#160;&#160;| Routed of name: string * topic: string<br />&#160;&#160;| Direct of string<br /><br />Full name: FsBunny.Exchange</div>
-<div class="tip" id="fs15">type IDictionary&lt;&#39;TKey,&#39;TValue&gt; =<br />&#160;&#160;member Add : key:&#39;TKey * value:&#39;TValue -&gt; unit<br />&#160;&#160;member ContainsKey : key:&#39;TKey -&gt; bool<br />&#160;&#160;member Item : &#39;TKey -&gt; &#39;TValue with get, set<br />&#160;&#160;member Keys : ICollection&lt;&#39;TKey&gt;<br />&#160;&#160;member Remove : key:&#39;TKey -&gt; bool<br />&#160;&#160;member TryGetValue : key:&#39;TKey * value:&#39;TValue -&gt; bool<br />&#160;&#160;member Values : ICollection&lt;&#39;TValue&gt;<br /><br />Full name: System.Collections.Generic.IDictionary&lt;_,_&gt;</div>
-<div class="tip" id="fs16">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = System.String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
-<div class="tip" id="fs17">type obj = System.Object<br /><br />Full name: Microsoft.FSharp.Core.obj</div>
-<div class="tip" id="fs18">type &#39;T option = Option&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Core.option&lt;_&gt;</div>
-<div class="tip" id="fs19">Multiple items<br />val byte : value:&#39;T -&gt; byte (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.byte<br /><br />--------------------<br />type byte = System.Byte<br /><br />Full name: Microsoft.FSharp.Core.byte</div>
-<div class="tip" id="fs20">val failwith : message:string -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.failwith</div>
-<div class="tip" id="fs21">val assembler : topic:string * properties:IDictionary&lt;string,obj&gt; * payload:byte [] -&gt; &#39;T<br /><br />Full name: Tutorial.assembler</div>
-<div class="tip" id="fs22">val topic : string</div>
-<div class="tip" id="fs23">val properties : IDictionary&lt;string,obj&gt;</div>
-<div class="tip" id="fs24">val payload : byte []</div>
-<div class="tip" id="fs25">type SomeRecord =<br />&#160;&#160;{x: int;}<br /><br />Full name: Tutorial.SomeRecord</div>
-<div class="tip" id="fs26">SomeRecord.x: int</div>
-<div class="tip" id="fs27">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
-<div class="tip" id="fs28">namespace FsBunny.Assemblers</div>
-<div class="tip" id="fs29">val sendSomeRecord : unit -&gt; unit<br /><br />Full name: Tutorial.sendSomeRecord</div>
-<div class="tip" id="fs30">val send : Publisher&lt;SomeRecord&gt;</div>
-<div class="tip" id="fs31">member EventStreams.GetJsonPublisher : exchange:Exchange -&gt; Publisher&lt;&#39;T&gt;</div>
-<div class="tip" id="fs32">abstract member EventStreams.Default : unit -&gt; Exchange</div>
-<div class="tip" id="fs33">val sendSomeRecordDisposeResources : unit -&gt; unit<br /><br />Full name: Tutorial.sendSomeRecordDisposeResources</div>
-<div class="tip" id="fs34">member EventStreams.UsingJsonPublisher : exchange:Exchange -&gt; cont:(Publisher&lt;&#39;T&gt; -&gt; unit) -&gt; unit</div>
-<div class="tip" id="fs35">namespace Google</div>
-<div class="tip" id="fs36">namespace Google.Protobuf</div>
-<div class="tip" id="fs37">namespace Google.Protobuf.WellKnownTypes</div>
-<div class="tip" id="fs38">namespace Microsoft.FSharp</div>
-<div class="tip" id="fs39">namespace Microsoft.FSharp.Data</div>
-<div class="tip" id="fs40">namespace Microsoft.FSharp.Data.UnitSystems</div>
-<div class="tip" id="fs41">namespace Microsoft.FSharp.Data.UnitSystems.SI</div>
-<div class="tip" id="fs42">namespace Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols</div>
-<div class="tip" id="fs43">val createConsumers : unit -&gt; unit<br /><br />Full name: Tutorial.createConsumers</div>
-<div class="tip" id="fs44">val temp : Consumer&lt;Int32Value&gt;</div>
-<div class="tip" id="fs45">member EventStreams.GetProtoConsumer : queue:Queue -&gt; exchange:Exchange -&gt; Consumer&lt;&#39;T&gt; (requires &#39;T :&gt; Google.Protobuf.IMessage&lt;&#39;T&gt; and default constructor)</div>
-<div class="tip" id="fs46">Multiple items<br />type Int32Value =<br />&#160;&#160;new : unit -&gt; Int32Value + 1 overload<br />&#160;&#160;member CalculateSize : unit -&gt; int<br />&#160;&#160;member Clone : unit -&gt; Int32Value<br />&#160;&#160;member Equals : other:obj -&gt; bool + 1 overload<br />&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;member MergeFrom : other:Int32Value -&gt; unit + 1 overload<br />&#160;&#160;member ToString : unit -&gt; string<br />&#160;&#160;member Value : int with get, set<br />&#160;&#160;member WriteTo : output:CodedOutputStream -&gt; unit<br />&#160;&#160;static val ValueFieldNumber : int<br />&#160;&#160;...<br /><br />Full name: Google.Protobuf.WellKnownTypes.Int32Value<br /><br />--------------------<br />Int32Value() : unit<br />Int32Value(other: Int32Value) : unit</div>
-<div class="tip" id="fs47">union case Queue.Temporary: Queue</div>
-<div class="tip" id="fs48">union case Exchange.Routed: name: string * topic: string -&gt; Exchange</div>
-<div class="tip" id="fs49">val persistent : Consumer&lt;Int64Value&gt;</div>
-<div class="tip" id="fs50">Multiple items<br />type Int64Value =<br />&#160;&#160;new : unit -&gt; Int64Value + 1 overload<br />&#160;&#160;member CalculateSize : unit -&gt; int<br />&#160;&#160;member Clone : unit -&gt; Int64Value<br />&#160;&#160;member Equals : other:obj -&gt; bool + 1 overload<br />&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;member MergeFrom : other:Int64Value -&gt; unit + 1 overload<br />&#160;&#160;member ToString : unit -&gt; string<br />&#160;&#160;member Value : int64 with get, set<br />&#160;&#160;member WriteTo : output:CodedOutputStream -&gt; unit<br />&#160;&#160;static val ValueFieldNumber : int<br />&#160;&#160;...<br /><br />Full name: Google.Protobuf.WellKnownTypes.Int64Value<br /><br />--------------------<br />Int64Value() : unit<br />Int64Value(other: Int64Value) : unit</div>
-<div class="tip" id="fs51">union case Queue.Persistent: string -&gt; Queue</div>
-<div class="tip" id="fs52">abstract member Consumer.Get : int&lt;s&gt; -&gt; ReliableResult&lt;&#39;T&gt; option</div>
-<div class="tip" id="fs53">[&lt;Measure&gt;]<br />type s = Data.UnitSystems.SI.UnitNames.second<br /><br />Full name: Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols.s</div>
-<div class="tip" id="fs54">union case Option.Some: Value: &#39;T -&gt; Option&lt;&#39;T&gt;</div>
-<div class="tip" id="fs55">val r : ReliableResult&lt;Int32Value&gt;</div>
-<div class="tip" id="fs56">val printf : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printf</div>
-<div class="tip" id="fs57">ReliableResult.msg: Int32Value</div>
-<div class="tip" id="fs58">property Int32Value.Value: int</div>
-<div class="tip" id="fs59">val r : ReliableResult&lt;Int64Value&gt;</div>
-<div class="tip" id="fs60">ReliableResult.msg: Int64Value</div>
-<div class="tip" id="fs61">property Int64Value.Value: int64</div>
-<div class="tip" id="fs62">abstract member Consumer.Ack : uint64 -&gt; unit</div>
-<div class="tip" id="fs63">ReliableResult.id: uint64</div>
+<div class="tip" id="fs11">namespace System.IO</div>
+<div class="tip" id="fs12">val serializer : obj<br /><br />Full name: Tutorial.JsonAssembly.serializer</div>
+<div class="tip" id="fs13">val s : obj</div>
+<div class="tip" id="fs14">val disassembler : exchange:Exchange -&gt; item:&#39;T -&gt; Exchange * IDictionary&lt;string,obj&gt; option * byte []<br /><br />Full name: Tutorial.JsonAssembly.disassembler</div>
+<div class="tip" id="fs15">val exchange : Exchange</div>
+<div class="tip" id="fs16">val item : &#39;T</div>
+<div class="tip" id="fs17">type Exchange =<br />&#160;&#160;| Routed of name: string * topic: string<br />&#160;&#160;| Direct of string<br /><br />Full name: FsBunny.Exchange</div>
+<div class="tip" id="fs18">type IDictionary&lt;&#39;TKey,&#39;TValue&gt; =<br />&#160;&#160;member Add : key:&#39;TKey * value:&#39;TValue -&gt; unit<br />&#160;&#160;member ContainsKey : key:&#39;TKey -&gt; bool<br />&#160;&#160;member Item : &#39;TKey -&gt; &#39;TValue with get, set<br />&#160;&#160;member Keys : ICollection&lt;&#39;TKey&gt;<br />&#160;&#160;member Remove : key:&#39;TKey -&gt; bool<br />&#160;&#160;member TryGetValue : key:&#39;TKey * value:&#39;TValue -&gt; bool<br />&#160;&#160;member Values : ICollection&lt;&#39;TValue&gt;<br /><br />Full name: System.Collections.Generic.IDictionary&lt;_,_&gt;</div>
+<div class="tip" id="fs19">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
+<div class="tip" id="fs20">type obj = Object<br /><br />Full name: Microsoft.FSharp.Core.obj</div>
+<div class="tip" id="fs21">type &#39;T option = Option&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Core.option&lt;_&gt;</div>
+<div class="tip" id="fs22">Multiple items<br />val byte : value:&#39;T -&gt; byte (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.byte<br /><br />--------------------<br />type byte = Byte<br /><br />Full name: Microsoft.FSharp.Core.byte</div>
+<div class="tip" id="fs23">val ms : MemoryStream</div>
+<div class="tip" id="fs24">Multiple items<br />type MemoryStream =<br />&#160;&#160;inherit Stream<br />&#160;&#160;new : unit -&gt; MemoryStream + 6 overloads<br />&#160;&#160;member CanRead : bool<br />&#160;&#160;member CanSeek : bool<br />&#160;&#160;member CanWrite : bool<br />&#160;&#160;member Capacity : int with get, set<br />&#160;&#160;member CopyToAsync : destination:Stream * bufferSize:int * cancellationToken:CancellationToken -&gt; Task<br />&#160;&#160;member Flush : unit -&gt; unit<br />&#160;&#160;member FlushAsync : cancellationToken:CancellationToken -&gt; Task<br />&#160;&#160;member GetBuffer : unit -&gt; byte[]<br />&#160;&#160;member Length : int64<br />&#160;&#160;...<br /><br />Full name: System.IO.MemoryStream<br /><br />--------------------<br />MemoryStream() : unit<br />MemoryStream(capacity: int) : unit<br />MemoryStream(buffer: byte []) : unit<br />MemoryStream(buffer: byte [], writable: bool) : unit<br />MemoryStream(buffer: byte [], index: int, count: int) : unit<br />MemoryStream(buffer: byte [], index: int, count: int, writable: bool) : unit<br />MemoryStream(buffer: byte [], index: int, count: int, writable: bool, publiclyVisible: bool) : unit</div>
+<div class="tip" id="fs25">val sw : StreamWriter</div>
+<div class="tip" id="fs26">Multiple items<br />type StreamWriter =<br />&#160;&#160;inherit TextWriter<br />&#160;&#160;new : stream:Stream -&gt; StreamWriter + 7 overloads<br />&#160;&#160;member AutoFlush : bool with get, set<br />&#160;&#160;member BaseStream : Stream<br />&#160;&#160;member Close : unit -&gt; unit<br />&#160;&#160;member Encoding : Encoding<br />&#160;&#160;member Flush : unit -&gt; unit<br />&#160;&#160;member FlushAsync : unit -&gt; Task<br />&#160;&#160;member Write : value:char -&gt; unit + 3 overloads<br />&#160;&#160;member WriteAsync : value:char -&gt; Task + 2 overloads<br />&#160;&#160;member WriteLineAsync : unit -&gt; Task + 3 overloads<br />&#160;&#160;...<br /><br />Full name: System.IO.StreamWriter<br /><br />--------------------<br />StreamWriter(stream: Stream) : unit<br />StreamWriter(path: string) : unit<br />StreamWriter(stream: Stream, encoding: Text.Encoding) : unit<br />StreamWriter(path: string, append: bool) : unit<br />StreamWriter(stream: Stream, encoding: Text.Encoding, bufferSize: int) : unit<br />StreamWriter(path: string, append: bool, encoding: Text.Encoding) : unit<br />StreamWriter(stream: Stream, encoding: Text.Encoding, bufferSize: int, leaveOpen: bool) : unit<br />StreamWriter(path: string, append: bool, encoding: Text.Encoding, bufferSize: int) : unit</div>
+<div class="tip" id="fs27">val jw : IDisposable</div>
+<div class="tip" id="fs28">union case Option.None: Option&lt;&#39;T&gt;</div>
+<div class="tip" id="fs29">MemoryStream.ToArray() : byte []</div>
+<div class="tip" id="fs30">val assembler : topic:string * properties:IDictionary&lt;string,obj&gt; * payload:byte [] -&gt; &#39;T<br /><br />Full name: Tutorial.JsonAssembly.assembler</div>
+<div class="tip" id="fs31">val topic : string</div>
+<div class="tip" id="fs32">val properties : IDictionary&lt;string,obj&gt;</div>
+<div class="tip" id="fs33">val payload : byte []</div>
+<div class="tip" id="fs34">val sr : StreamReader</div>
+<div class="tip" id="fs35">Multiple items<br />type StreamReader =<br />&#160;&#160;inherit TextReader<br />&#160;&#160;new : stream:Stream -&gt; StreamReader + 10 overloads<br />&#160;&#160;member BaseStream : Stream<br />&#160;&#160;member Close : unit -&gt; unit<br />&#160;&#160;member CurrentEncoding : Encoding<br />&#160;&#160;member DiscardBufferedData : unit -&gt; unit<br />&#160;&#160;member EndOfStream : bool<br />&#160;&#160;member Peek : unit -&gt; int<br />&#160;&#160;member Read : unit -&gt; int + 1 overload<br />&#160;&#160;member ReadAsync : buffer:char[] * index:int * count:int -&gt; Task&lt;int&gt;<br />&#160;&#160;member ReadBlock : buffer:char[] * index:int * count:int -&gt; int<br />&#160;&#160;...<br /><br />Full name: System.IO.StreamReader<br /><br />--------------------<br />StreamReader(stream: Stream) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />StreamReader(path: string) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />StreamReader(stream: Stream, detectEncodingFromByteOrderMarks: bool) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />StreamReader(stream: Stream, encoding: Text.Encoding) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />StreamReader(path: string, detectEncodingFromByteOrderMarks: bool) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />StreamReader(path: string, encoding: Text.Encoding) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />StreamReader(stream: Stream, encoding: Text.Encoding, detectEncodingFromByteOrderMarks: bool) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />StreamReader(path: string, encoding: Text.Encoding, detectEncodingFromByteOrderMarks: bool) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />StreamReader(stream: Stream, encoding: Text.Encoding, detectEncodingFromByteOrderMarks: bool, bufferSize: int) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />StreamReader(path: string, encoding: Text.Encoding, detectEncodingFromByteOrderMarks: bool, bufferSize: int) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em></div>
+<div class="tip" id="fs36">val jr : IDisposable</div>
+<div class="tip" id="fs37">val this : EventStreams</div>
+<div class="tip" id="fs38">member EventStreams.GetJsonConsumer : queue:Queue -&gt; exchange:Exchange -&gt; Consumer&lt;&#39;T&gt;<br /><br />Full name: Tutorial.JsonAssembly.GetJsonConsumer<br /><em><br /><br />&#160;Construct a consumer, using specified message type, queue, the exchange to bind to and Proto assember.</em></div>
+<div class="tip" id="fs39">val queue : Queue</div>
+<div class="tip" id="fs40">Multiple items<br />type Queue =<br />&#160;&#160;| Persistent of string<br />&#160;&#160;| Temporary<br />&#160;&#160;member AutoAck : bool<br /><br />Full name: FsBunny.Queue<br /><br />--------------------<br />type Queue&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; Queue&lt;&#39;T&gt; + 2 overloads<br />&#160;&#160;member Clear : unit -&gt; unit<br />&#160;&#160;member Contains : item:&#39;T -&gt; bool<br />&#160;&#160;member CopyTo : array:&#39;T[] * arrayIndex:int -&gt; unit<br />&#160;&#160;member Count : int<br />&#160;&#160;member Dequeue : unit -&gt; &#39;T<br />&#160;&#160;member Enqueue : item:&#39;T -&gt; unit<br />&#160;&#160;member GetEnumerator : unit -&gt; Enumerator&lt;&#39;T&gt;<br />&#160;&#160;member Peek : unit -&gt; &#39;T<br />&#160;&#160;member ToArray : unit -&gt; &#39;T[]<br />&#160;&#160;...<br />&#160;&#160;nested type Enumerator<br /><br />Full name: System.Collections.Generic.Queue&lt;_&gt;<br /><br />--------------------<br />Queue() : unit<br />Queue(capacity: int) : unit<br />Queue(collection: IEnumerable&lt;&#39;T&gt;) : unit</div>
+<div class="tip" id="fs41">Multiple items<br />module Consumer<br /><br />from FsBunny<br /><br />--------------------<br />type Consumer&lt;&#39;T&gt; =<br />&#160;&#160;interface<br />&#160;&#160;&#160;&#160;abstract member Ack : uint64 -&gt; unit<br />&#160;&#160;&#160;&#160;abstract member Get : int&lt;s&gt; -&gt; ReliableResult&lt;&#39;T&gt; option<br />&#160;&#160;&#160;&#160;abstract member Nack : uint64 -&gt; unit<br />&#160;&#160;end<br /><br />Full name: FsBunny.Consumer&lt;_&gt;</div>
+<div class="tip" id="fs42">abstract member EventStreams.GetConsumer : Queue -&gt; Exchange -&gt; Assembler&lt;&#39;T&gt; -&gt; Consumer&lt;&#39;T&gt;</div>
+<div class="tip" id="fs43">member EventStreams.GetJsonPublisher : exchange:Exchange -&gt; Publisher&lt;&#39;T&gt;<br /><br />Full name: Tutorial.JsonAssembly.GetJsonPublisher<br /><em><br /><br />&#160;Construct a publisher for the specified message type using Json disassembler.</em></div>
+<div class="tip" id="fs44">type Publisher&lt;&#39;T&gt; = &#39;T -&gt; unit<br /><br />Full name: FsBunny.Publisher&lt;_&gt;</div>
+<div class="tip" id="fs45">abstract member EventStreams.GetPublisher : Disassembler&lt;&#39;T&gt; -&gt; Publisher&lt;&#39;T&gt;</div>
+<div class="tip" id="fs46">member EventStreams.UsingJsonPublisher : exchange:Exchange -&gt; cont:(Publisher&lt;&#39;T&gt; -&gt; unit) -&gt; unit<br /><br />Full name: Tutorial.JsonAssembly.UsingJsonPublisher<br /><em><br /><br />&#160;Use a publisher with a continuation for the specified message type using Json disassembler.</em></div>
+<div class="tip" id="fs47">val cont : (Publisher&lt;&#39;T&gt; -&gt; unit)</div>
+<div class="tip" id="fs48">type unit = Unit<br /><br />Full name: Microsoft.FSharp.Core.unit</div>
+<div class="tip" id="fs49">abstract member EventStreams.UsingPublisher : Disassembler&lt;&#39;T&gt; -&gt; (Publisher&lt;&#39;T&gt; -&gt; unit) -&gt; unit</div>
+<div class="tip" id="fs50">type SomeRecord =<br />&#160;&#160;{x: int;}<br /><br />Full name: Tutorial.SomeRecord</div>
+<div class="tip" id="fs51">SomeRecord.x: int</div>
+<div class="tip" id="fs52">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
+<div class="tip" id="fs53">module JsonAssembly<br /><br />from Tutorial</div>
+<div class="tip" id="fs54">val sendSomeRecord : unit -&gt; unit<br /><br />Full name: Tutorial.sendSomeRecord</div>
+<div class="tip" id="fs55">val send : Publisher&lt;SomeRecord&gt;</div>
+<div class="tip" id="fs56">member EventStreams.GetJsonPublisher : exchange:Exchange -&gt; Publisher&lt;&#39;T&gt;<br /><em><br /><br />&#160;Construct a publisher for the specified message type using Json disassembler.</em></div>
+<div class="tip" id="fs57">abstract member EventStreams.Default : unit -&gt; Exchange</div>
+<div class="tip" id="fs58">val sendSomeRecordDisposeResources : unit -&gt; unit<br /><br />Full name: Tutorial.sendSomeRecordDisposeResources</div>
+<div class="tip" id="fs59">member EventStreams.UsingJsonPublisher : exchange:Exchange -&gt; cont:(Publisher&lt;&#39;T&gt; -&gt; unit) -&gt; unit<br /><em><br /><br />&#160;Use a publisher with a continuation for the specified message type using Json disassembler.</em></div>
+<div class="tip" id="fs60">namespace Microsoft.FSharp</div>
+<div class="tip" id="fs61">namespace Microsoft.FSharp.Data</div>
+<div class="tip" id="fs62">namespace Microsoft.FSharp.Data.UnitSystems</div>
+<div class="tip" id="fs63">namespace Microsoft.FSharp.Data.UnitSystems.SI</div>
+<div class="tip" id="fs64">namespace Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols</div>
+<div class="tip" id="fs65">val createConsumers : unit -&gt; unit<br /><br />Full name: Tutorial.createConsumers</div>
+<div class="tip" id="fs66">val temp : Consumer&lt;int&gt;</div>
+<div class="tip" id="fs67">member EventStreams.GetJsonConsumer : queue:Queue -&gt; exchange:Exchange -&gt; Consumer&lt;&#39;T&gt;<br /><em><br /><br />&#160;Construct a consumer, using specified message type, queue, the exchange to bind to and Proto assember.</em></div>
+<div class="tip" id="fs68">union case Queue.Temporary: Queue</div>
+<div class="tip" id="fs69">union case Exchange.Routed: name: string * topic: string -&gt; Exchange</div>
+<div class="tip" id="fs70">val persistent : Consumer&lt;int64&gt;</div>
+<div class="tip" id="fs71">Multiple items<br />val int64 : value:&#39;T -&gt; int64 (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int64<br /><br />--------------------<br />type int64 = System.Int64<br /><br />Full name: Microsoft.FSharp.Core.int64<br /><br />--------------------<br />type int64&lt;&#39;Measure&gt; = int64<br /><br />Full name: Microsoft.FSharp.Core.int64&lt;_&gt;</div>
+<div class="tip" id="fs72">union case Queue.Persistent: string -&gt; Queue</div>
+<div class="tip" id="fs73">abstract member Consumer.Get : int&lt;s&gt; -&gt; ReliableResult&lt;&#39;T&gt; option</div>
+<div class="tip" id="fs74">[&lt;Measure&gt;]<br />type s = Data.UnitSystems.SI.UnitNames.second<br /><br />Full name: Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols.s</div>
+<div class="tip" id="fs75">union case Option.Some: Value: &#39;T -&gt; Option&lt;&#39;T&gt;</div>
+<div class="tip" id="fs76">val r : ReliableResult&lt;int&gt;</div>
+<div class="tip" id="fs77">val printf : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printf</div>
+<div class="tip" id="fs78">ReliableResult.msg: int</div>
+<div class="tip" id="fs79">val r : ReliableResult&lt;int64&gt;</div>
+<div class="tip" id="fs80">ReliableResult.msg: int64</div>
+<div class="tip" id="fs81">abstract member Consumer.Ack : uint64 -&gt; unit</div>
+<div class="tip" id="fs82">ReliableResult.id: uint64</div>
 
         </div>
         <div class="span3">
