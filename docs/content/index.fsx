@@ -55,10 +55,10 @@ let ``RabbitMQ raw event roundtrips``() =
     
     let consumer = streams.GetConsumer<int> 
                     Temporary 
-                    (Routed("amq.topic", "test.*.sample")) 
-                    (fun (topic,headers,payload) -> int(topic.Split('.').[1]))
+                    (Routed("amq.topic", "test.*.sample")) // Routed over "amq.topic" on key "test.*.sample"
+                    (fun (topic,headers,payload) -> int(topic.Split('.').[1])) // assemble the message from RMQ primitives
     let publish = streams.GetPublisher<int> 
-                    (fun x -> Routed("amq.topic", sprintf "test.%d.sample" x),None,[||])
+                    (fun x -> Routed("amq.topic", sprintf "test.%d.sample" x),None,[||]) // see the tutorial for details
     
     publish 1
 

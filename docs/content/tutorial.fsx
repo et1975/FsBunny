@@ -2,6 +2,9 @@
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
 #I "../../build_output"
+#I "../../packages/build/Newtonsoft.Json"
+#I "../../packages/build/Fable.Json"
+
 open System.Collections.Generic
 
 (**
@@ -44,34 +47,65 @@ Assemblers grew out of serializers by necessity to inspect/provide metadata in a
 Messages can be anything, and it's up to assembler to figure out how to map it to/from RMQ primitives. 
 For example, MQTT status message has no payload and the topic itself carries the ONLINE/OFFLINE indication.
 
-You may want to provide your own and the implementation is as simple as these two functions:
-*)
+You may want to provide your own and the implementation is as simple as two functions, here's an example of a Fable-compatible JSON assembler:
 
-// disassemble a message into RMQ primitives: target exchange, properties and payload
-let disassembler exchange (item:'T) : (Exchange * IDictionary<string, obj> option * byte []) = 
-    failwith "Implement me!"
-
-// assemble a message from RMQ primitives
-let assembler (topic:string, properties:IDictionary<string, obj>, payload:byte[]) : 'T = 
-    failwith "Implement me!"
-
-(**
-In case of a failure to assemble a message from RMQ primitives, the message will be Nacked and go into a Dead Letter queue, if one is setup (recommended).
-
-FsBunny comes with several default assemblers:
-
-- Google Protobuf (v3) 
-- FsPickler 
-- JSON with Fable converter
-- MQTT status
-
-And they are all availabe as extension methods on the EventStreams API, for example:
 *)
 #r "Newtonsoft.Json.dll"
+#r "Fable.JsonConverter.dll"
+
+module JsonAssembly =
+    open FsBunny
+    open System
+    open System.IO
+    open Newtonsoft.Json
+
+    let serializer = 
+        let s = JsonSerializer.CreateDefault()
+        s.Converters.Add(Fable.JsonConverter())
+        s.Converters.Add(Converters.IsoDateTimeConverter (DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fff'Z'"))
+        s
+
+    // disassemble a message into RMQ primitives: target exchange, properties and payload
+    let disassembler exchange (item:'T) : (Exchange * IDictionary<string, obj> option * byte []) = 
+        use ms = new MemoryStream()
+        use sw = new StreamWriter (ms)
+        use jw = new JsonTextWriter (sw)
+        serializer.Serialize (jw,item)
+        jw.Flush()
+        exchange, None, ms.ToArray()
+
+    // assemble a message from RMQ primitives
+    let assembler (topic:string, properties:IDictionary<string, obj>, payload:byte[]) : 'T = 
+        use ms = new MemoryStream(payload)
+        use sr = new StreamReader (ms)
+        use jr = new JsonTextReader (sr)
+        serializer.Deserialize<'T>(jr)
+
+    // and let's expose the functionality as extensions on EventStreams
+    type FsBunny.EventStreams with 
+       /// Construct a consumer, using specified message type, queue, the exchange to bind to and Proto assember.
+        member this.GetJsonConsumer<'T> (queue: Queue) (exchange:Exchange) : Consumer<'T> =
+            this.GetConsumer<'T> queue exchange assembler
+
+        /// Construct a publisher for the specified message type using Json disassembler.
+        member this.GetJsonPublisher<'T> (exchange: Exchange) : Publisher<'T> = 
+            this.GetPublisher<'T> (disassembler exchange)
+
+        /// Use a publisher with a continuation for the specified message type using Json disassembler.
+        member this.UsingJsonPublisher<'T> (exchange: Exchange) (cont:Publisher<'T> -> unit) : unit =
+            this.UsingPublisher<'T> (disassembler exchange) cont
+
+
+(**
+In case of a failure to assemble a message from RMQ primitives, the message will be Nacked and go into a Dead Letter queue (if one is setup).
+
+Publisher
+========================
+*)
 
 type SomeRecord = { x : int }
 
-open FsBunny.Assemblers
+open JsonAssembly // import our assembler
 
 let sendSomeRecord() =
     let send = streams.GetJsonPublisher (streams.Default()) // sending to the default exchange
@@ -79,12 +113,10 @@ let sendSomeRecord() =
     // can keep sending messages
 
 (**
- Publisher
-========================
 Publisher is just a function that takes a message and returns when completed and 
 there are two ways to obtain it:
 
-- For long-living use, as in example above
+- For long-living use, as in example above,
 - Or for immediate use and disposal:
 
 *)
@@ -100,20 +132,17 @@ let sendSomeRecordDisposeResources() =
 
 (** Consumer
 ========================
-Consumer implicitly creates a queue, subscribes to a topic on the specified exchange and starts listening for messages.
-Consumer can bind to a persistent or temporary queue, the temporary queue will be given a Guid for a name, Ack messages automatically and be deleted once the consumer is garbage-collected.
-Persistent queue consumer is the choice for guaranteed processing and is expected to Ack/Nack messages explicitly.
+Consumer implicitly creates a queue, subscribes to a topic on the specified `Exchange` and starts listening for messages.
+Consumer can bind to a `Persistent` or `Temporary` queue (temporary queues will be given Guid names, Ack messages automatically and be deleted once the consumer is garbage-collected).
+For guaranteed processing you'll use Persistent queue and is expected to Ack/Nack messages explicitly.
 
 *)
-#r "Google.Protobuf.dll"
-
-open Google.Protobuf.WellKnownTypes
 open FSharp.Data.UnitSystems.SI.UnitSymbols
 
 let createConsumers () =
-    let temp = streams.GetProtoConsumer<Int32Value> 
+    let temp = streams.GetJsonConsumer<int> 
                     Temporary (Routed("amq.topic", "test.roundtrip"))
-    let persistent = streams.GetProtoConsumer<Int64Value> 
+    let persistent = streams.GetJsonConsumer<int64> 
                         (Persistent "my_queue") (Routed("amq.topic", "test.roundtrip"))
 
 
@@ -123,7 +152,7 @@ Once created, we can start polling them, specifying the timeout
 
 *)
     match temp.Get 10<s> with
-    | Some r -> printf "Got an int32: %A" r.msg.Value
+    | Some r -> printf "Got an int32: %A" r.msg
     | _ -> ()
 
 (**
@@ -133,8 +162,9 @@ Using the persistent consumer, once we have processed the message we need to ack
 *)
 
     match persistent.Get 10<s> with
-    | Some r -> printf "Got an int64: %A" r.msg.Value
+    | Some r -> printf "Got an int64: %A" r.msg
                 persistent.Ack r.id
+                // or persistent.Nack r.id
     | _ -> ()
 
 (**

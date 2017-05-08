@@ -1,8 +1,4 @@
 RabbitMQ.Client
-google.protobuf
-FsPickler
-Newtonsoft.Json
-Fable.JsonConverter
 
 group Tests
 Nunit

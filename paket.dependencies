@@ -6,10 +6,6 @@ group Main
 
     nuget FSharp.Core redirects: force
     nuget RabbitMQ.Client
-    nuget google.protobuf
-    nuget FsPickler
-    nuget Newtonsoft.Json
-    nuget Fable.JsonConverter
 
 
 group Tests
@@ -26,5 +22,7 @@ group Build
     nuget SourceLink.Fake
     nuget FAKE
     nuget FSharp.Formatting
+    nuget Newtonsoft.Json
+    nuget Fable.JsonConverter
 
     github fsharp/FAKE modules/Octokit/Octokit.fsx
