@@ -43,7 +43,9 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="AssemblyVersion.fs" />
     <Compile Include="Api.fs" />
-    <Compile Include="Rmq.fs" />
+    <Compile Include="Consumer.fs" />
+    <Compile Include="Publisher.fs" />
+    <Compile Include="EventStreams.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\4.1\Framework\v4.0\Microsoft.FSharp.Targets" />

@@ -54,18 +54,6 @@ type EventStreams =
     /// Use a publisher with a continuation for the specified message type and disassembler.
     abstract UsingPublisher<'T> : Disassembler<'T> -> (Publisher<'T> -> unit) -> unit
 
-/// Consumer extensions.
-[<RequireQualifiedAccessAttribute>]
-module Consumer = 
-    
-    /// Convert auto-acking consumer into ISeq<_>
-    /// selector: result mapper.
-    /// consumer: event stream consumer to use
-    let toSeq selector (consumer : Consumer<'T>) = 
-        seq {
-            while true do
-                yield selector <| consumer.Get
-        }
 
 /// Infix operators.
 [<AutoOpenAttribute>]
