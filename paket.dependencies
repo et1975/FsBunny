@@ -17,8 +17,10 @@ group Tests
 
 
 group Build
+framework: NET46
     source https://nuget.org/api/v2
-
+    nuget FSharp.Core ~> 4 redirects: force
+    nuget Argu
     nuget SourceLink.Fake
     nuget FAKE
     nuget FSharp.Formatting
