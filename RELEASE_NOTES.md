@@ -1,3 +1,6 @@
+#### 1.0.0-beta-1 - Nov 2017
+* netstandard2.0 release
+
 #### 0.0.2 - July 2017
 * Tighter consume lock
 

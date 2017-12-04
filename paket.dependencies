@@ -1,15 +1,17 @@
 redirects: on
-framework: >=net45
 
 group Main
-    source https://www.nuget.org/api/v2
+framework: netstandard2.0
+storage: none
+source https://www.nuget.org/api/v2
 
     nuget FSharp.Core redirects: force
     nuget RabbitMQ.Client
 
 
 group Tests
-    source https://nuget.org/api/v2
+source https://nuget.org/api/v2
+framework: net461
 
     nuget Nunit 2.6.4
     nuget Nunit.Runners 2.6.4
@@ -17,8 +19,8 @@ group Tests
 
 
 group Build
-framework: NET46
-    source https://nuget.org/api/v2
+framework: net46
+source https://nuget.org/api/v2
     nuget FSharp.Core ~> 4 redirects: force
     nuget Argu
     nuget SourceLink.Fake

@@ -1,63 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Name>FsBunny</Name>
-    <AssemblyName>FsBunny</AssemblyName>
-    <RootNamespace>FsBunny</RootNamespace>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>d333f8c5-1914-4955-8ec1-5777d615b75e</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DocumentationFile>obj/FsBunny.XML</DocumentationFile>
+    <PackageTags>fsharp;rabbitmq</PackageTags>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>Full</DebugType>
-    <Optimize>false</Optimize>
-    <Tailcalls>false</Tailcalls>
-    <OutputPath>..\..\build_output\</OutputPath>
-    <DocumentationFile>..\..\build_output\FsBunny.xml</DocumentationFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <WarningLevel>3</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>PdbOnly</DebugType>
-    <Optimize>true</Optimize>
-    <Tailcalls>true</Tailcalls>
-    <OutputPath>..\..\build_output\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>..\..\build_output\FsBunny.xml</DocumentationFile>
-    <WarningLevel>3</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime" />
-  </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="AssemblyVersion.fs" />
     <Compile Include="Api.fs" />
     <Compile Include="Consumer.fs" />
     <Compile Include="Publisher.fs" />
     <Compile Include="EventStreams.fs" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\4.1\Framework\v4.0\Microsoft.FSharp.Targets" />
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3' Or $(TargetFrameworkVersion) == 'v4.7')">
-      <ItemGroup>
-        <Reference Include="RabbitMQ.Client">
-          <HintPath>..\..\packages\RabbitMQ.Client\lib\net451\RabbitMQ.Client.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
