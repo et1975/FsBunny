@@ -64,3 +64,4 @@ UpgradeLog*.htm
 build_output
 *.optdata
 *.sigdata
+.ionide

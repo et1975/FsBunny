@@ -43,40 +43,6 @@ let byteAssebler (_,_,payload:byte[]) =
 let byteDisassembler topic x =
     Routed("amq.topic", topic),None,[|byte x|]
 
-[<Test>]
-[<Category("interactive")>]
-let ``Consumer can read and ack concurrently``() = 
-    let consumer = streams.GetConsumer<int> (Persistent "test_conc") (Routed("amq.topic", "test.conc")) byteAssebler
-    let publish = streams.GetPublisher<int> (byteDisassembler "test.conc")
-    let ms = System.Collections.Concurrent.ConcurrentStack()
-    let total = 10000
-
-    async {
-        do! async { 
-            for i in [1..total] do
-                publish i
-        }
-
-        async { 
-            let mutable count = 0
-            while count < total do
-                consumer.Get(1<s>) 
-                |> function 
-                | Some m -> ms.Push m; count <- count + 1
-                | None -> ()
-        } |> Async.Start
-        
-        Threading.Thread.Sleep (TimeSpan.FromSeconds 2.0)
-        do! async { 
-            let mutable count = 0
-            while count < total do
-                ms.TryPop() 
-                |> function 
-                | true,msg -> consumer.Ack msg.id; count <- count + 1
-                | _ -> () 
-        }
-    } |> Async.RunSynchronously
-
 
 [<Test>]
 [<Category("interactive")>]

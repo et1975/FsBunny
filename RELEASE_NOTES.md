@@ -1,3 +1,7 @@
+#### 2.0.0-beta-3 - Nov 2017
+* inherit and implement IDisposable for Consumer<'msg> 
+* removing fractional Get blocking 
+
 #### 1.0.0-beta-1 - Nov 2017
 * netstandard2.0 release
 

@@ -26,6 +26,7 @@ type Publisher<'T> = 'T -> unit
 
 /// Consumer interface.
 type Consumer<'T> = 
+    inherit IDisposable
     abstract member Get : int<s> -> ReliableResult<'T> option
     abstract member Ack : uint64 -> unit
     abstract member Nack : uint64 -> unit
