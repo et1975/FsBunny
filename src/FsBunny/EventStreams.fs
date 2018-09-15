@@ -10,16 +10,15 @@ open Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols
 /// retries: number of reconnect attempts.
 /// limit: prefetch limit.
 type RabbitMqEventStreams(factory : ConnectionFactory, defaultExchange : string, retries : uint16, limit:uint16) = 
-    let withConnection = 
-        let connectionRef = ref (Option<IConnection>.None)
-        fun cont ->
-            fun () -> 
-                match !connectionRef with
-                | Some c when c.IsOpen -> c
-                | _ -> connectionRef := Some(factory.CreateConnection())
-                       (!connectionRef).Value
-            |> lock connectionRef
-            |> cont
+    let connectionRef = ref (Option<IConnection>.None)
+    let withConnection cont =
+        fun () -> 
+            match !connectionRef with
+            | Some c when c.IsOpen -> c
+            | _ -> connectionRef := Some(factory.CreateConnection())
+                   (!connectionRef).Value
+        |> lock connectionRef
+        |> cont
 
     let openChannel() =
         let channelRef = ref (Option<IModel>.None)
@@ -71,3 +70,9 @@ type RabbitMqEventStreams(factory : ConnectionFactory, defaultExchange : string,
             |> cont 
             dispose()
 
+        member x.Dispose() =        
+            match !connectionRef with
+            | Some conn ->
+                conn.Dispose()
+                connectionRef := None
+            | _ -> ()

@@ -39,7 +39,8 @@ type Disassembler<'T> = 'T->(Exchange*IDictionary<string, obj> option * byte [])
 
 /// EventStreams is a factory for constructing consumers and publishers.
 type EventStreams = 
-    
+    inherit IDisposable
+
     /// Default exchange.
     abstract Default : unit -> Exchange
     
