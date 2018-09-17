@@ -48,7 +48,7 @@ type RabbitMqEventStreams(factory : ConnectionFactory, defaultExchange : string,
                 (!bindingRef).Value
             |> cont
     
-    new(factory : ConnectionFactory, defaultExchange : string) = RabbitMqEventStreams(factory, defaultExchange, 3us, 300us)
+    new(factory : ConnectionFactory, defaultExchange : string) = new RabbitMqEventStreams(factory, defaultExchange, 3us, 300us)
 
     interface EventStreams with
         member x.Default() = Direct defaultExchange
