@@ -2,7 +2,6 @@
 
 open System
 open RabbitMQ.Client
-open Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols
 
 /// RabbitMqEventStreams constructs event-stream publishers and consumers.
 /// factory: RabbitMQ connection factory to use.

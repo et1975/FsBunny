@@ -29,7 +29,7 @@ It takes several arguments:
 open FsBunny
 
 let streams = 
-    RabbitMqEventStreams(
+    new RabbitMqEventStreams(
             RabbitMQ.Client.ConnectionFactory(), // underlying connection factory
             "amq.topic",                         // default exchange
             3us,                                 // number of reconnect retries (publisher only)
@@ -168,5 +168,5 @@ Using the persistent consumer, once we have processed the message we need to ack
     | _ -> ()
 
 (**
-Consumer API is thread-safe and Get, Ack/Nack can happen in parallel. 
+Consumer API is thread-safe. 
 *)

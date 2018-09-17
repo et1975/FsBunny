@@ -3,7 +3,7 @@
 open System
 open System.Linq
 open System.Collections.Generic
-open Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols
+type [<Measure>] s = Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols.s
 
 /// ReliableResult contains message and the session-bound unique id used for acknowlegements.
 type ReliableResult<'T> = 

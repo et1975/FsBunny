@@ -43,17 +43,16 @@ This example demonstrates the API defined by FsBunny:
 #r "FsBunny.dll"
 #r "RabbitMQ.Client.dll"
 open FsBunny
-open FSharp.Data.UnitSystems.SI.UnitSymbols
 
 let ``RabbitMQ raw event roundtrips``() = 
-    let streams = 
+    use streams = 
            RabbitMqEventStreams(
               RabbitMQ.Client.ConnectionFactory(), // underlying connection factory
               "amq.topic",                         // default exchange
               3us,                                 // number of reconnect retries (publisher only)
               2000us) :> EventStreams              // prefetch limit
     
-    let consumer = streams.GetConsumer<int> 
+    use consumer = streams.GetConsumer<int> 
                     Temporary 
                     (Routed("amq.topic", "test.*.sample")) // Routed over "amq.topic" on key "test.*.sample"
                     (fun (topic,headers,payload) -> int(topic.Split('.').[1])) // assemble the message from RMQ primitives
@@ -67,6 +66,13 @@ let ``RabbitMQ raw event roundtrips``() =
     | _ -> failwith "should have gotten the message we just sent"
 
 (**
+Upgrading from v1.x
+-------
+
+- `EventStreams` and `Consumer` now implement `IDisposable`, so you can release them whenever you don't need them anymore.
+- The consumer implementation will no longer try and interleave the `Get` and `Ack`/`Nack`, fully blocking the gets instead.
+
+
 
 Samples & documentation
 -----------------------

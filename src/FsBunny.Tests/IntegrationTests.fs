@@ -10,7 +10,7 @@ open System.Diagnostics
 open System.Threading
 
 let streams =
-    RabbitMqEventStreams(RabbitMQ.Client.ConnectionFactory(),"amq.topic",3us,2000us) :> EventStreams
+    new RabbitMqEventStreams(RabbitMQ.Client.ConnectionFactory(),"amq.topic",3us,2000us) :> EventStreams
 
 [<Test>]
 let ``Can instantiate the streams``() = 

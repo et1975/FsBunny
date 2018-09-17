@@ -24,9 +24,8 @@ let info =
     "project-nuget", "http://nuget.org/packages/FsBunny" ]
 
 // --------------------------------------------------------------------------------------
-// For typical project, no changes are needed below
-// --------------------------------------------------------------------------------------
 
+#I "../../packages/build/FSharp.Compiler.Service/lib/net45"
 #load "../../packages/build/FSharp.Formatting/FSharp.Formatting.fsx"
 #I "../../packages/build/FAKE/tools/"
 #r "FakeLib.dll"

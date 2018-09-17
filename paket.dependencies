@@ -26,6 +26,7 @@ source https://nuget.org/api/v2
     nuget SourceLink.Fake
     nuget FAKE
     nuget FSharp.Formatting
+    nuget FSharp.Compiler.Service 2.0.0.6
     nuget Newtonsoft.Json
     nuget Fable.JsonConverter
 

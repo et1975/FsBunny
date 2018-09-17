@@ -1,4 +1,4 @@
-#### 2.0.0-beta-4 - Nov 2017
+#### 2.0.0 - Nov 2017
 * inherit and implement IDisposable for Consumer<'msg> 
 * inherit and implement IDisposable for EventStreams
 * removing fractional Get blocking 
