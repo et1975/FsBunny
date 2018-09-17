@@ -2,9 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>release-notes</title>
+    <title>Consumer - FsBunny</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="Streaming API for RabbitMQ"/>
+    <meta name="description" content=""/>
     <meta name="author" content="Prolucid"/>
 
     <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
@@ -33,29 +33,68 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h4><a name="2-0-0-Nov-2017" class="anchor" href="#2-0-0-Nov-2017">2.0.0 - Nov 2017</a></h4>
-<ul>
-<li>inherit and implement IDisposable for Consumer<'msg></li>
-<li>inherit and implement IDisposable for EventStreams</li>
-<li>removing fractional Get blocking</li>
-</ul>
-<h4><a name="1-0-0-beta-1-Nov-2017" class="anchor" href="#1-0-0-beta-1-Nov-2017">1.0.0-beta-1 - Nov 2017</a></h4>
-<ul>
-<li>netstandard2.0 release</li>
-</ul>
-<h4><a name="0-0-2-July-2017" class="anchor" href="#0-0-2-July-2017">0.0.2 - July 2017</a></h4>
-<ul>
-<li>Tighter consume lock</li>
-</ul>
-<h4><a name="0-0-1-May-2017" class="anchor" href="#0-0-1-May-2017">0.0.1 - May 2017</a></h4>
-<ul>
-<li>Removing all/default assemblers</li>
-</ul>
-<h4><a name="0-0-1-beta-May-2017" class="anchor" href="#0-0-1-beta-May-2017">0.0.1-beta - May 2017</a></h4>
-<ul>
-<li>Initial release</li>
-</ul>
 
+
+
+<h1>Consumer</h1>
+<p>
+  <span>Namespace: FsBunny</span><br />
+</p>
+<div class="xmldoc">
+<p>Consumer Implementation</p>
+
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
+            buildConsumer(...)
+          </code>
+          <div class="tip" id="1">
+            <strong>Signature:</strong> autoAck:bool -&gt; assember:(string * IDictionary&lt;string,obj&gt; * byte [] -&gt; &#39;T) -&gt; withBinding:((string * &#39;b -&gt; QueueingBasicConsumer) -&gt; QueueingBasicConsumer) -&gt; Consumer&lt;&#39;T&gt;<br />
+                          <strong>Type parameters:</strong> 'T, 'b          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/Prolucid/FsBunny/tree/master/src/FsBunny/Consumer.fs#L9-9" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
+            toSeq(selector consumer)
+          </code>
+          <div class="tip" id="2">
+            <strong>Signature:</strong> selector:((int&lt;MeasureProduct&lt;s,MeasureOne&gt;&gt; -&gt; ReliableResult&lt;&#39;T&gt; option) -&gt; &#39;?7671) -&gt; consumer:Consumer&lt;&#39;T&gt; -&gt; seq&lt;&#39;?7671&gt;<br />
+                          <strong>Type parameters:</strong> 'T, '?7671          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/Prolucid/FsBunny/tree/master/src/FsBunny/Consumer.fs#L48-48" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Convert auto-acking consumer into ISeq<_>
+selector: result mapper.
+consumer: event stream consumer to use</p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
         </div>
         <div class="span3">

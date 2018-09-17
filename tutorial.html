@@ -60,7 +60,7 @@ It takes several arguments:</p>
 <span class="k">open</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">FsBunny</span>
 
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">streams</span> <span class="o">=</span> 
-    <span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="t">RabbitMqEventStreams</span>(
+    <span class="k">new</span> <span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="t">RabbitMqEventStreams</span>(
             <span onmouseout="hideTip(event, 'fs7', 7)" onmouseover="showTip(event, 'fs7', 7)" class="i">RabbitMQ</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 8)" onmouseover="showTip(event, 'fs8', 8)" class="i">Client</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 9)" onmouseover="showTip(event, 'fs9', 9)" class="t">ConnectionFactory</span>(), <span class="c">// underlying connection factory</span>
             <span class="s">&quot;amq.topic&quot;</span>,                         <span class="c">// default exchange</span>
             <span class="n">3us</span>,                                 <span class="c">// number of reconnect retries (publisher only)</span>
@@ -264,7 +264,7 @@ For guaranteed processing you'll use Persistent queue and is expected to Ack/Nac
 </code></pre></td>
 </tr>
 </table>
-<p>Consumer API is thread-safe and Get, Ack/Nack can happen in parallel.</p>
+<p>Consumer API is thread-safe.</p>
 
 <div class="tip" id="fs1">namespace System</div>
 <div class="tip" id="fs2">namespace System.Collections</div>
@@ -309,7 +309,7 @@ For guaranteed processing you'll use Persistent queue and is expected to Ack/Nac
 <div class="tip" id="fs41">Multiple items<br />module Consumer<br /><br />from FsBunny<br /><br />--------------------<br />type Consumer&lt;&#39;T&gt; =<br />&#160;&#160;interface<br />&#160;&#160;&#160;&#160;abstract member Ack : uint64 -&gt; unit<br />&#160;&#160;&#160;&#160;abstract member Get : int&lt;s&gt; -&gt; ReliableResult&lt;&#39;T&gt; option<br />&#160;&#160;&#160;&#160;abstract member Nack : uint64 -&gt; unit<br />&#160;&#160;end<br /><br />Full name: FsBunny.Consumer&lt;_&gt;</div>
 <div class="tip" id="fs42">abstract member EventStreams.GetConsumer : Queue -&gt; Exchange -&gt; Assembler&lt;&#39;T&gt; -&gt; Consumer&lt;&#39;T&gt;</div>
 <div class="tip" id="fs43">member EventStreams.GetJsonPublisher : exchange:Exchange -&gt; Publisher&lt;&#39;T&gt;<br /><br />Full name: Tutorial.JsonAssembly.GetJsonPublisher<br /><em><br /><br />&#160;Construct a publisher for the specified message type using Json disassembler.</em></div>
-<div class="tip" id="fs44">type Publisher&lt;&#39;T&gt; = &#39;T -&gt; unit<br /><br />Full name: FsBunny.Publisher&lt;_&gt;</div>
+<div class="tip" id="fs44">Multiple items<br />module Publisher<br /><br />from FsBunny<br /><br />--------------------<br />type Publisher&lt;&#39;T&gt; = &#39;T -&gt; unit<br /><br />Full name: FsBunny.Publisher&lt;_&gt;</div>
 <div class="tip" id="fs45">abstract member EventStreams.GetPublisher : Disassembler&lt;&#39;T&gt; -&gt; Publisher&lt;&#39;T&gt;</div>
 <div class="tip" id="fs46">member EventStreams.UsingJsonPublisher : exchange:Exchange -&gt; cont:(Publisher&lt;&#39;T&gt; -&gt; unit) -&gt; unit<br /><br />Full name: Tutorial.JsonAssembly.UsingJsonPublisher<br /><em><br /><br />&#160;Use a publisher with a continuation for the specified message type using Json disassembler.</em></div>
 <div class="tip" id="fs47">val cont : (Publisher&lt;&#39;T&gt; -&gt; unit)</div>
