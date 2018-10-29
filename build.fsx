@@ -39,7 +39,7 @@ let summary = "Streaming F# API for RabbitMQ"
 let description = "Streaming F# API for RabbitMQ"
 
 // List of author names (for NuGet package)
-let authors = [ "Prolucid" ]
+let authors = [ "et1975" ]
 
 // Tags for your project (for NuGet package)
 let tags = "F# RabbitMQ"
@@ -52,7 +52,7 @@ let configuration = "Release"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
-let gitOwner = "Prolucid"
+let gitOwner = "et1975"
 let gitHome = sprintf "https://github.com/%s" gitOwner
 
 // The name of the project on GitHub

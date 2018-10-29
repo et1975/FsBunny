@@ -1,4 +1,4 @@
-Copyright 2017 Prolucid Technologies Inc
+Copyright 2017-2018 Prolucid Technologies and FsBunny contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

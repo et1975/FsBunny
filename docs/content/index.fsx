@@ -93,12 +93,12 @@ The library is available under Apache license, which allows modification and
 redistribution for both commercial and non-commercial purposes. For more information see the 
 [License file][license] in the GitHub repository. 
 
-  [content]: https://github.com/Prolucid/FsBunny/tree/master/docs/content
-  [gh]: https://github.com/Prolucid/FsBunny
-  [issues]: https://github.com/Prolucid/FsBunny/issues
-  [readme]: https://github.com/Prolucid/FsBunny/blob/master/README.md
-  [license]: https://github.com/Prolucid/FsBunny/blob/master/LICENSE.md
+  [content]: https://github.com/et1975/FsBunny/tree/master/docs/content
+  [gh]: https://github.com/et1975/FsBunny
+  [issues]: https://github.com/et1975/FsBunny/issues
+  [readme]: https://github.com/et1975/FsBunny/blob/master/README.md
+  [license]: https://github.com/et1975/FsBunny/blob/master/LICENSE.md
 
 
-Copyright 2017 Prolucid Technologies Inc
+Copyright 2017 et1975 Technologies Inc
 *)
