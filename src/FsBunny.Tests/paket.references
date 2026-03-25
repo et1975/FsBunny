@@ -1,6 +1,0 @@
-RabbitMQ.Client
-FSharp.Core
-
-group Tests
-Nunit
-Unquote

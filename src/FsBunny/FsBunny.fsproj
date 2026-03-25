@@ -1,16 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <DocumentationFile>obj/FsBunny.XML</DocumentationFile>
-    <PackageTags>fsharp;rabbitmq</PackageTags>
+    <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="paket.references" />
     <Compile Include="Api.fs" />
     <Compile Include="Consumer.fs" />
     <Compile Include="Publisher.fs" />
     <Compile Include="EventStreams.fs" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <PackageReference Include="RabbitMQ.Client" Version="6.*" />
+  </ItemGroup>
 </Project>

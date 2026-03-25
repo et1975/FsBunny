@@ -6,44 +6,47 @@ open RabbitMQ.Client
 open RabbitMQ.Client.Events
 open System.Collections.Generic
 open System
+open System.Collections.Concurrent
 
 let buildConsumer autoAck assember withBinding = 
-    let consumerRef = ref Option<QueueingBasicConsumer>.None
-    let withConsumer cont = 
+    let channelRef = ref Option<IModel>.None
+    let queue = new BlockingCollection<BasicDeliverEventArgs>()
+    let withChannel cont = 
         fun () ->
-            match !consumerRef with
-            | Some consumer when consumer.Model.IsOpen && consumer.IsRunning -> consumer
-            | _ -> fun (name, channel) ->
-                        let consumer = QueueingBasicConsumer(channel)
-                        consumerRef := Some consumer
+            match !channelRef with
+            | Some channel when channel.IsOpen -> channel
+            | _ -> fun (name, channel:IModel) ->
+                        let consumer = EventingBasicConsumer(channel)
+                        consumer.Received.Add(fun evt -> queue.Add(evt))
+                        channelRef := Some channel
                         channel.BasicConsume(name, autoAck, consumer) |> ignore
-                        while not <| consumer.IsRunning do System.Threading.Thread.Sleep 1
-                        consumer
+                        channel
                    |> withBinding
-        |> lock consumerRef
+        |> lock channelRef
         |> cont
 
-    withConsumer ignore // force the subscription to occur
+    withChannel ignore // force the subscription to occur
 
     { new Consumer<'T> with
         member x.Get timeout =
-            match withConsumer (fun consumer -> consumer.Queue.Dequeue (int timeout*1000)) with
-            | true, evt -> 
+            let mutable evt = Unchecked.defaultof<BasicDeliverEventArgs>
+            if queue.TryTake(&evt, int timeout*1000) then
                 try 
-                    Some { msg = assember(evt.RoutingKey,evt.BasicProperties.Headers,evt.Body)
+                    Some { msg = assember(evt.RoutingKey,evt.BasicProperties.Headers,evt.Body.ToArray())
                            id = evt.DeliveryTag }
                 with ex -> // dead letter policy should be used to handle permanently rejected/undeliverable: http://www.rabbitmq.com/dlx.html
-                    withConsumer (fun consumer -> consumer.Model.BasicNack(evt.DeliveryTag, false, false))
+                    withChannel (fun channel -> channel.BasicNack(evt.DeliveryTag, false, false))
                     None
-            | _ -> None
-        member x.Ack id = withConsumer <| fun consumer -> consumer.Model.BasicAck(id, false)
-        member x.Nack id = withConsumer <| fun consumer -> consumer.Model.BasicNack(id, false, true)
+            else None
+        member x.Ack id = withChannel <| fun channel -> channel.BasicAck(id, false)
+        member x.Nack id = withChannel <| fun channel -> channel.BasicNack(id, false, true)
         member x.Dispose() =
-            match !consumerRef with
-            | Some v -> 
-               v.Model.Dispose()
-               consumerRef := None
+            match !channelRef with
+            | Some ch -> 
+               ch.Dispose()
+               channelRef := None
             | _ -> ()
+            queue.Dispose()
     }
 
 /// Convert auto-acking consumer into ISeq<_>

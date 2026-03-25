@@ -1,7 +1,7 @@
 (*** hide ***)
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
-#I "../../build_output"
+#I "../../src/FsBunny/bin/Release/net6.0"
 
 (**
 Streaming API for RabbitMQ
