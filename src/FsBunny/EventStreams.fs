@@ -12,27 +12,27 @@ type RabbitMqEventStreams(factory : ConnectionFactory, defaultExchange : string,
     let connectionRef = ref (Option<IConnection>.None)
     let withConnection cont =
         fun () -> 
-            match !connectionRef with
+            match connectionRef.Value with
             | Some c when c.IsOpen -> c
-            | _ -> connectionRef := Some(factory.CreateConnection())
-                   (!connectionRef).Value
+            | _ -> connectionRef.Value <- Some(factory.CreateConnection())
+                   connectionRef.Value.Value
         |> lock connectionRef
         |> cont
 
     let openChannel() =
         let channelRef = ref (Option<IModel>.None)
         (fun cont ->
-            match !channelRef with
+            match channelRef.Value with
             | Some channel when channel.IsOpen -> channel
-            | _ -> channelRef := Some (withConnection <| fun conn -> conn.CreateModel())
-                   (!channelRef).Value
+            | _ -> channelRef.Value <- Some (withConnection <| fun conn -> conn.CreateModel())
+                   channelRef.Value.Value
             |> cont
-        ,fun () -> (!channelRef).Value.Dispose())
+        ,fun () -> channelRef.Value.Value.Dispose())
 
     let withBinding exchange queue = 
         let bindingRef = ref Option<string*IModel>.None
         fun cont -> 
-            match (!bindingRef) with
+            match bindingRef.Value with
             | Some (name,channel) when channel.IsOpen -> (name,channel)
             | _ -> 
                 let channel = withConnection <| fun conn -> conn.CreateModel()
@@ -44,8 +44,8 @@ type RabbitMqEventStreams(factory : ConnectionFactory, defaultExchange : string,
                 match exchange with
                 | Direct name -> channel.QueueBind(q.QueueName, name, null)
                 | Routed(name, topic) -> channel.QueueBind(q.QueueName, name, topic)
-                bindingRef := Some(q.QueueName, channel)
-                (!bindingRef).Value
+                bindingRef.Value <- Some(q.QueueName, channel)
+                bindingRef.Value.Value
             |> cont
     
     new(factory : ConnectionFactory, defaultExchange : string) = new RabbitMqEventStreams(factory, defaultExchange, 3us, 300us)
@@ -70,8 +70,8 @@ type RabbitMqEventStreams(factory : ConnectionFactory, defaultExchange : string,
             dispose()
 
         member x.Dispose() =        
-            match !connectionRef with
+            match connectionRef.Value with
             | Some conn ->
                 conn.Dispose()
-                connectionRef := None
+                connectionRef.Value <- None
             | _ -> ()

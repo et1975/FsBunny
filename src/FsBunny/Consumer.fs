@@ -13,12 +13,12 @@ let buildConsumer autoAck assember withBinding =
     let queue = new BlockingCollection<BasicDeliverEventArgs>()
     let withChannel cont = 
         fun () ->
-            match !channelRef with
+            match channelRef.Value with
             | Some channel when channel.IsOpen -> channel
             | _ -> fun (name, channel:IModel) ->
                         let consumer = EventingBasicConsumer(channel)
                         consumer.Received.Add(fun evt -> queue.Add(evt))
-                        channelRef := Some channel
+                        channelRef.Value <- Some channel
                         channel.BasicConsume(name, autoAck, consumer) |> ignore
                         channel
                    |> withBinding
@@ -41,10 +41,10 @@ let buildConsumer autoAck assember withBinding =
         member x.Ack id = withChannel <| fun channel -> channel.BasicAck(id, false)
         member x.Nack id = withChannel <| fun channel -> channel.BasicNack(id, false, true)
         member x.Dispose() =
-            match !channelRef with
+            match channelRef.Value with
             | Some ch -> 
                ch.Dispose()
-               channelRef := None
+               channelRef.Value <- None
             | _ -> ()
             queue.Dispose()
     }
